@@ -1,4 +1,4 @@
-package com.funky.funkyservice.controller;
+package com.funky.funkyjobs.controller;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -11,7 +11,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,7 +38,7 @@ public class EmailController {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
             // Set the email details
-
+            helper.setTo(System.getenv("EMAIL_SENDER"));
             helper.setSubject("Ordenes para imprimir");
             helper.setText("Esta en el adjunto");
 

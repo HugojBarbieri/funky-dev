@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: "optional:configserver:http://localhost:8088"
+  cloud:
+    gateway:
+      route:
+        RouteDefinitionLocator: INFO
+      routes:
+        - id: funky-service
+          uri: lb://funky-service
+          predicates:
+            - Path=/funky/**
+        - id: package-service
+          uri: lb://package-service
+          predicates:
+            - Path=/package/**

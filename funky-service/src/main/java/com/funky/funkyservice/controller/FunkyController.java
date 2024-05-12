@@ -17,7 +17,7 @@ public class FunkyController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FunkyController.class);
 
-    private FunkyService funkyService;
+    private final FunkyService funkyService;
 
     @Autowired
     public FunkyController(FunkyService funkyService) {

@@ -1,4 +1,4 @@
-package com.funky.funkyservice;
+package com.funky.funkyjobs;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,10 +7,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class FunkyServiceApplication {
+@EnableScheduling
+public class FunkyJobsApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FunkyServiceApplication.class, args);
+		SpringApplication.run(FunkyJobsApplication.class, args);
 	}
 
 }
