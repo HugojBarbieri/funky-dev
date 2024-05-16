@@ -1,6 +1,6 @@
 package com.funky.funkyservice.controller;
 
-import com.funky.funkyservice.model.OrderDTO;
+import com.funky.funkyservice.dto.OrderDTO;
 import com.funky.funkyservice.service.FunkyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

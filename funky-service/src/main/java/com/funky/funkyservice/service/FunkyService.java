@@ -1,8 +1,7 @@
 package com.funky.funkyservice.service;
 
-import com.funky.funkyservice.model.OrderDTO;
+import com.funky.funkyservice.dto.OrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +22,6 @@ public class FunkyService {
 
     public List<OrderDTO> getUnpackagedOrders() {
         List<OrderDTO> orders = new ArrayList<>(Arrays.asList(tiendaNubeService.getUnpackagedOrders()));
-        return orders.stream().sorted(Comparator.comparing(OrderDTO::getCreatedAt).reversed().thenComparing(OrderDTO::getNumber)).collect(Collectors.toList());
+        return orders.stream().sorted(Comparator.comparing(OrderDTO::createdAt).reversed().thenComparing(OrderDTO::number)).collect(Collectors.toList());
     }
 }

@@ -46,3 +46,11 @@
 /funky-service/.mvn/wrapper/maven-wrapper.jar
 /package-service/.mvn/wrapper/maven-wrapper.jar
 /service-registry/.mvn/wrapper/maven-wrapper.jar
+/api-gateway/.mvn/wrapper/maven-wrapper.jar
+/config-server/.mvn/wrapper/maven-wrapper.jar
+/funky-jobs/.mvn/wrapper/maven-wrapper.jar
+/funky-service/.mvn/wrapper/maven-wrapper.jar
+/package-service/.mvn/wrapper/maven-wrapper.jar
+/service-registry/.mvn/wrapper/maven-wrapper.jar
+/.idea/inspectionProfiles/Project_Default.xml
+/var.env
