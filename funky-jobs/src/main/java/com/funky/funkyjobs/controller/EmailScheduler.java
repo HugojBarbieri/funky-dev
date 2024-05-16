@@ -1,4 +1,4 @@
-package com.funky.funkyservice.controller;
+package com.funky.funkyjobs.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class EmailScheduler {
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     @Autowired
     public EmailScheduler(RestTemplate restTemplate) {

@@ -1,4 +1,4 @@
-package com.funky.funkyservice.model;
+package com.funky.packageservice.model;
 
 public class CustomerDTO {
     private String name;

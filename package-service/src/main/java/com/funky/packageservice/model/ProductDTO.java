@@ -1,4 +1,4 @@
-package com.funky.funkyservice.model;
+package com.funky.packageservice.model;
 
 
 import java.util.List;

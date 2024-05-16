@@ -1,7 +1,6 @@
-package com.funky.funkyservice.model;
+package com.funky.packageservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.Date;
 import java.util.List;
