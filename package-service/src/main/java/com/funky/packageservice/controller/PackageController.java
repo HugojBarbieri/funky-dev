@@ -3,7 +3,6 @@ package com.funky.packageservice.controller;
 import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.model.OrderDTO;
 import com.funky.packageservice.model.ProductDTO;
-import com.funky.packageservice.repository.OrderRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -11,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,14 +22,17 @@ import java.util.List;
 @RequestMapping("/package")
 public class PackageController {
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageController.class);
 
     private CellStyle greyCellStyle;
     private CellStyle cellStyle;
 
+    private final FunkyClient funkyClient;
+
     @Autowired
-    private FunkyClient funkyClient;
+    public PackageController(FunkyClient funkyClient) {
+        this.funkyClient = funkyClient;
+    }
 
     @PostMapping("/save-excel")
     public ResponseEntity<String> saveExcel() {
@@ -50,7 +54,7 @@ public class PackageController {
 
             return ResponseEntity.ok("Excel file saved successfully.");
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to send create the excel", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save Excel file.");
         }
     }
@@ -58,7 +62,7 @@ public class PackageController {
     private void writeDataToSheet(List<OrderDTO> orders, Sheet sheet, Workbook workbook) {
         // Create font with larger size
         Font font = workbook.createFont();
-        font.setFontHeightInPoints((short) 12); // Adjust font size as needed
+        font.setFontHeightInPoints((short) 8); // Adjust font size as needed
 
         // Create cell style with the larger font
         cellStyle = getCellStyle(workbook, font);
@@ -66,8 +70,12 @@ public class PackageController {
         // Create a grey cell style with light grey background
         greyCellStyle = getCellStyle(workbook, cellStyle);
 
-
+        // Set print properties
+        PrintSetup printSetup = sheet.getPrintSetup();
+        printSetup.setPaperSize(PrintSetup.A4_PAPERSIZE);
+        printSetup.setLandscape(true); // Vertical orientation
         int rowIndex = 0;
+
         for (OrderDTO orderDTO : orders) {
             // Write order details and customer name
             writeOrderDetails(sheet, orderDTO, rowIndex, cellStyle, greyCellStyle);
@@ -79,7 +87,7 @@ public class PackageController {
             rowIndex++;
 
             // Write product data
-            rowIndex = writeProductData(sheet, orderDTO.getProducts(), rowIndex, cellStyle);
+            rowIndex = writeProductData(sheet, orderDTO.getProducts(), rowIndex);
 
             // Add empty row between orders
             rowIndex++;
@@ -87,8 +95,11 @@ public class PackageController {
             rowIndex++;
             rowIndex++;
 
+            // Write a row of dashes between orders
+            writeDashRow(sheet, rowIndex, cellStyle);
+            rowIndex++;
+
         }
-        rowIndex++;
 
         // Autosize columns after data is written
         for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
@@ -113,7 +124,7 @@ public class PackageController {
     private void writeOrderNotesDetails(Sheet sheet, OrderDTO orderDTO, int rowIndex, CellStyle cellStyle, CellStyle greyCellStyle) {
         Row orderRow = sheet.createRow(rowIndex);
         writeCell(orderRow, 0, "Notas clientes:", greyCellStyle);
-        writeCell(orderRow, 1, orderDTO.getNote() + "", cellStyle);
+        writeCell(orderRow, 1, orderDTO.getNote(), cellStyle);
         writeCell(orderRow, 2, "Notas Nuestras:", greyCellStyle);
         writeCell(orderRow, 3, orderDTO.getOwnerNote(), greyCellStyle);
     }
@@ -145,10 +156,10 @@ public class PackageController {
         writeCell(productHeaderRow, 1, "Cantidad", cellStyle);
     }
 
-    private int writeProductData(Sheet sheet, List<ProductDTO> products, int rowIndex, CellStyle cellStyle) {
+    private int writeProductData(Sheet sheet, List<ProductDTO> products, int rowIndex) {
         boolean switchFont = true;
         for (ProductDTO product : products) {
-            cellStyle = switchFont ? greyCellStyle : this.cellStyle;
+            CellStyle cellStyle = switchFont ? greyCellStyle : this.cellStyle;
             Row productRow = sheet.createRow(rowIndex++);
             writeCell(productRow, 0, product.getName(), cellStyle);
             writeCell(productRow, 1, product.getQuantity() + "", cellStyle);
@@ -161,6 +172,11 @@ public class PackageController {
         Cell cell = row.createCell(column);
         cell.setCellValue(value);
         cell.setCellStyle(cellStyle);
+    }
+
+    private void writeDashRow(Sheet sheet, int rowIndex, CellStyle cellStyle) {
+        Row dashRow = sheet.createRow(rowIndex);
+        writeCell(dashRow, 0, "#".repeat(35), cellStyle);
     }
 
 }
