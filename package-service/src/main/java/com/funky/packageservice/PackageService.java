@@ -1,6 +1,5 @@
-package com.funky.packageservice.controller;
+package com.funky.packageservice;
 
-import com.funky.packageservice.PackageService;
 import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.model.OrderDTO;
 import com.funky.packageservice.model.ProductDTO;
@@ -9,71 +8,39 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
+public class PackageService {
 
-@RestController
-@RequestMapping("/package")
-public class PackageController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PackageController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PackageService.class);
 
     private CellStyle greyCellStyle;
     private CellStyle cellStyle;
 
-    private final PackageService packageService;
+    private final FunkyClient funkyClient;
 
     @Autowired
-    public PackageController(PackageService packageService) {
-        this.packageService = packageService;
+    public PackageService(FunkyClient funkyClient) {
+        this.funkyClient = funkyClient;
     }
 
-    @GetMapping("/download-excel")
-    public ResponseEntity<byte[]> downloadExcel() {
-        try {
-            Workbook workbook = packageService.getWorkbook();
-
-            // Convert the workbook to a byte array
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            workbook.write(outputStream);
-            byte[] excelBytes = outputStream.toByteArray();
-
-            // Set headers for the response
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=orders.xlsx");
-            headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-
-            return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
-        } catch (IOException e) {
-            LOGGER.error("Failed to create the Excel file", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public Workbook getWorkbook() {
+        return getWorkbookFromOrders();
     }
 
-    @PostMapping("/save-excel")
-    public ResponseEntity<String> saveExcel() {
-        try {
-            Workbook workbook = packageService.getWorkbook();
-            // Save the workbook to a file
-            FileOutputStream fileOut = new FileOutputStream("orders.xlsx");
-            workbook.write(fileOut);
-            fileOut.close();
+    private Workbook getWorkbookFromOrders() {
+        List<OrderDTO> orders = funkyClient.getUnpackagedOrders();
 
-            return ResponseEntity.ok("Excel file saved successfully in path");
-        } catch (IOException e) {
-            LOGGER.error("Failed to send create the excel", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save Excel file.");
-        }
+        // Create a new Excel workbook
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Orders");
+
+        // Write data to the Excel file
+        writeDataToSheet(orders, sheet, workbook);
+        return workbook;
     }
 
     private void writeDataToSheet(List<OrderDTO> orders, Sheet sheet, Workbook workbook) {
@@ -195,5 +162,4 @@ public class PackageController {
         Row dashRow = sheet.createRow(rowIndex);
         writeCell(dashRow, 0, "#".repeat(35), cellStyle);
     }
-
 }
