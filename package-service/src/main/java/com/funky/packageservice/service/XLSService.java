@@ -18,16 +18,9 @@ public class XLSService {
 
     private CellStyle greyCellStyle;
     private CellStyle cellStyle;
-    private final FunkyClient funkyClient;
 
-    @Autowired
-    public XLSService(FunkyClient funkyClient) {
-        this.funkyClient = funkyClient;
-    }
 
-    public Workbook getWorkbookFromOrders() {
-        List<OrderDTO> orders = funkyClient.getUnpackagedOrders();
-
+    public Workbook getWorkbookFromOrders(List<OrderDTO> orders) {
         // Create a new Excel workbook
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(SHEET_NAME);

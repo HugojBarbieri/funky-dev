@@ -1,5 +1,7 @@
 package com.funky.packageservice.service;
 
+import com.funky.packageservice.client.FunkyClient;
+import com.funky.packageservice.model.OrderDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,12 +18,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.apache.poi.ss.usermodel.Workbook;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class PackageServiceTest {
 
     @Mock
     private XLSService xlsService;
+
+    @Mock
+    private FunkyClient funkyClient;
 
     @InjectMocks
     private PackageService packageService;
@@ -30,19 +37,21 @@ public class PackageServiceTest {
 
     @BeforeEach
     public void setUp() {
-        packageService = new PackageService(xlsService);
+        packageService = new PackageService(xlsService, funkyClient);
     }
 
     @Test
     public void testGetWorkbook() {
         Workbook mockWorkbook = mock(Workbook.class);
-        when(xlsService.getWorkbookFromOrders()).thenReturn(mockWorkbook);
+        List<OrderDTO> mockOrders = new ArrayList<>();
+        when(funkyClient.getUnpackagedOrders()).thenReturn(mockOrders);
+        when(xlsService.getWorkbookFromOrders(mockOrders)).thenReturn(mockWorkbook);
 
         Workbook workbook = packageService.getWorkbook();
         assertNotNull(workbook);
         assertEquals(mockWorkbook, workbook);
 
-        verify(xlsService, times(1)).getWorkbookFromOrders();
+        verify(xlsService, times(1)).getWorkbookFromOrders(anyList());
     }
 
     @Test
