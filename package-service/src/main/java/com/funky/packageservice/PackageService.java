@@ -2,6 +2,7 @@ package com.funky.packageservice;
 
 import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.model.OrderDTO;
+import com.funky.packageservice.model.PaymentStatus;
 import com.funky.packageservice.model.ProductDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -120,10 +121,10 @@ public class PackageService {
         writeCell(orderRow, 2, "Nombre:", greyCellStyle);
         writeCell(orderRow, 3, orderDTO.getCustomer().getName(), greyCellStyle);
         writeCell(orderRow, 4, "PAGADA:", greyCellStyle);
-        if (orderDTO.getPaymentStatus().equals("pending")) {
-            writeCell(orderRow, 5, "SI", greyCellStyle);
+        if (PaymentStatus.PENDING.getName().equals(orderDTO.getPaymentStatus())) {
+            writeCell(orderRow, 5, "NO", greyCellStyle);
         } else {
-            writeCell(orderRow, 5, "NO", cellStyle);
+            writeCell(orderRow, 5,  "SI", cellStyle);
         }
 
         //here is when not paid yet
