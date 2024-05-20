@@ -1,7 +1,6 @@
 package com.funky.packageservice.controller;
 
-import com.funky.packageservice.PackageService;
-import org.apache.poi.ss.usermodel.CellStyle;
+import com.funky.packageservice.service.PackageService;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +33,7 @@ public class PackageController {
 
     @GetMapping("/download-excel")
     public ResponseEntity<byte[]> downloadExcel() {
+        LOGGER.info("Calling /download-excel endpoint");
         try {
             Workbook workbook = packageService.getWorkbook();
 
@@ -44,7 +44,7 @@ public class PackageController {
 
             // Set headers for the response
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=orders.xlsx");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + packageService.fileName());
             headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
             return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
@@ -56,10 +56,11 @@ public class PackageController {
 
     @PostMapping("/save-excel")
     public ResponseEntity<String> saveExcel() {
+        LOGGER.info("Calling /save-excel endpoint");
         try {
             Workbook workbook = packageService.getWorkbook();
             // Save the workbook to a file
-            FileOutputStream fileOut = new FileOutputStream("orders.xlsx");
+            FileOutputStream fileOut = new FileOutputStream(packageService.fileName());
             workbook.write(fileOut);
             fileOut.close();
 

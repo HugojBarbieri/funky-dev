@@ -1,4 +1,4 @@
-package com.funky.packageservice;
+package com.funky.packageservice.service;
 
 import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.model.OrderDTO;
@@ -6,38 +6,31 @@ import com.funky.packageservice.model.PaymentStatus;
 import com.funky.packageservice.model.ProductDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class PackageService {
+import static com.funky.packageservice.util.XLSNamesConstant.*;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PackageService.class);
+@Service
+public class XLSService {
 
     private CellStyle greyCellStyle;
     private CellStyle cellStyle;
-
     private final FunkyClient funkyClient;
 
     @Autowired
-    public PackageService(FunkyClient funkyClient) {
+    public XLSService(FunkyClient funkyClient) {
         this.funkyClient = funkyClient;
     }
 
-    public Workbook getWorkbook() {
-        return getWorkbookFromOrders();
-    }
-
-    private Workbook getWorkbookFromOrders() {
+    public Workbook getWorkbookFromOrders() {
         List<OrderDTO> orders = funkyClient.getUnpackagedOrders();
 
         // Create a new Excel workbook
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Orders");
+        Sheet sheet = workbook.createSheet(SHEET_NAME);
 
         // Write data to the Excel file
         writeDataToSheet(orders, sheet, workbook);
@@ -58,7 +51,7 @@ public class PackageService {
         // Set print properties
         PrintSetup printSetup = sheet.getPrintSetup();
         printSetup.setPaperSize(PrintSetup.A4_PAPERSIZE);
-        printSetup.setLandscape(true); // Vertical orientation
+        printSetup.setLandscape(false); // Vertical orientation
         int rowIndex = 0;
 
         for (OrderDTO orderDTO : orders) {
@@ -108,7 +101,7 @@ public class PackageService {
 
     private void writeOrderNotesDetails(Sheet sheet, OrderDTO orderDTO, int rowIndex, CellStyle cellStyle, CellStyle greyCellStyle) {
         Row orderRow = sheet.createRow(rowIndex);
-        writeCell(orderRow, 0, "Notas clientes:", greyCellStyle);
+        writeCell(orderRow, 0, CLIENT_NOTES, greyCellStyle);
         writeCell(orderRow, 1, orderDTO.getNote(), cellStyle);
         writeCell(orderRow, 2, "Notas Nuestras:", greyCellStyle);
         writeCell(orderRow, 3, orderDTO.getOwnerNote(), greyCellStyle);
