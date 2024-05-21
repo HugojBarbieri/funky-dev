@@ -2,6 +2,7 @@ package com.funky.packageservice.service;
 
 import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.model.OrderDTO;
+import com.funky.packageservice.model.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
 public class PackageServiceTest {
@@ -63,5 +66,32 @@ public class PackageServiceTest {
             String actualFileName = packageService.fileName();
             assertEquals("orders_20_May.xlsx", actualFileName);
         }
+    }
+
+    @Test
+    public void testGetUnpackagedAndPaidOrders() {
+        // Given
+        OrderDTO order1 = new OrderDTO();
+        order1.setPaymentStatus(PaymentStatus.PAID.getName());
+
+        OrderDTO order2 = new OrderDTO();
+        order2.setPaymentStatus(PaymentStatus.PENDING.getName());
+
+        OrderDTO order3 = new OrderDTO();
+        order3.setPaymentStatus(PaymentStatus.PAID.getName());
+
+        List<OrderDTO> unpackagedOrders = Arrays.asList(order1, order2, order3);
+
+        when(funkyClient.getUnpackagedOrders()).thenReturn(unpackagedOrders);
+
+        // When
+        List<OrderDTO> result = packageService.getUnpackagedAndPaidOrders();
+
+        // Then
+        List<OrderDTO> expected = unpackagedOrders.stream()
+                .filter(orderDTO -> PaymentStatus.PAID.getName().equals(orderDTO.getPaymentStatus()))
+                .collect(Collectors.toList());
+
+        assertEquals(expected, result);
     }
 }

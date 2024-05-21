@@ -1,17 +1,17 @@
 package com.funky.packageservice.service;
 
-import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.model.OrderDTO;
-import com.funky.packageservice.model.PaymentStatus;
 import com.funky.packageservice.model.ProductDTO;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.funky.packageservice.util.XLSNamesConstant.*;
+import static com.funky.packageservice.util.XLSNamesConstant.CLIENT_NOTES;
+import static com.funky.packageservice.util.XLSNamesConstant.SHEET_NAME;
 
 @Service
 public class XLSService {
@@ -33,7 +33,7 @@ public class XLSService {
     private void writeDataToSheet(List<OrderDTO> orders, Sheet sheet, Workbook workbook) {
         // Create font with larger size
         Font font = workbook.createFont();
-        font.setFontHeightInPoints((short) 8); // Adjust font size as needed
+        font.setFontHeightInPoints((short) 10); // Adjust font size as needed
 
         // Create cell style with the larger font
         cellStyle = getCellStyle(workbook, font);
@@ -46,8 +46,13 @@ public class XLSService {
         printSetup.setPaperSize(PrintSetup.A4_PAPERSIZE);
         printSetup.setLandscape(false); // Vertical orientation
         int rowIndex = 0;
+        int multiplesOf35Passed = 0;
 
         for (OrderDTO orderDTO : orders) {
+            if ((rowIndex + 8) / 35 > multiplesOf35Passed) {
+                sheet.setRowBreak(rowIndex - 2);
+                multiplesOf35Passed++;
+            }
             // Write order details and customer name
             writeOrderDetails(sheet, orderDTO, rowIndex, cellStyle, greyCellStyle);
             rowIndex += 2; // Move to the next row after writing order details and adding an empty row
@@ -85,11 +90,23 @@ public class XLSService {
     }
 
     private static CellStyle getCellStyle(Workbook workbook, CellStyle cellStyle) {
-        CellStyle greyCellStyle = workbook.createCellStyle();
-        greyCellStyle.cloneStyleFrom(cellStyle); // Copy the style from the default cell style
-        greyCellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        greyCellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        return greyCellStyle;
+        CellStyle borderedCellStyle = workbook.createCellStyle();
+        borderedCellStyle.cloneStyleFrom(cellStyle); // Copy the style from the default cell style
+
+        // Set the border style
+        borderedCellStyle.setBorderTop(XSSFCellStyle.BORDER_THIN);
+        borderedCellStyle.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+        borderedCellStyle.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+        borderedCellStyle.setBorderRight(XSSFCellStyle.BORDER_THIN);
+
+        // Set the border color (optional, you can choose the desired color)
+        short borderColor = IndexedColors.BLACK.getIndex();
+        borderedCellStyle.setTopBorderColor(borderColor);
+        borderedCellStyle.setBottomBorderColor(borderColor);
+        borderedCellStyle.setLeftBorderColor(borderColor);
+        borderedCellStyle.setRightBorderColor(borderColor);
+        return borderedCellStyle;
+
     }
 
     private void writeOrderNotesDetails(Sheet sheet, OrderDTO orderDTO, int rowIndex, CellStyle cellStyle, CellStyle greyCellStyle) {
@@ -106,14 +123,6 @@ public class XLSService {
         writeCell(orderRow, 1, orderDTO.getNumber() + "", greyCellStyle);
         writeCell(orderRow, 2, "Nombre:", greyCellStyle);
         writeCell(orderRow, 3, orderDTO.getCustomer().getName(), greyCellStyle);
-        writeCell(orderRow, 4, "PAGADA:", greyCellStyle);
-        if (PaymentStatus.PENDING.getName().equals(orderDTO.getPaymentStatus())) {
-            writeCell(orderRow, 5, "NO", greyCellStyle);
-        } else {
-            writeCell(orderRow, 5,  "SI", cellStyle);
-        }
-
-        //here is when not paid yet
     }
 
     private void totalQuantityProducts(Sheet sheet, Integer quantityProducts, int rowIndex, CellStyle cellStyle) {

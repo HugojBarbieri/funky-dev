@@ -2,6 +2,7 @@ package com.funky.packageservice.service;
 
 import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.model.OrderDTO;
+import com.funky.packageservice.model.PaymentStatus;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PackageService {
@@ -26,13 +28,19 @@ public class PackageService {
         this.funkyClient = funkyClient;
     }
 
+    public List<OrderDTO> getUnpackagedAndPaidOrders() {
+        return funkyClient.getUnpackagedOrders().stream()
+                .filter(orderDTO -> PaymentStatus.PAID.getName()
+                        .equals(orderDTO.getPaymentStatus())).collect(Collectors.toList());
+    }
+
     public List<OrderDTO> getUnpackagedOrders() {
         return funkyClient.getUnpackagedOrders();
     }
 
     public Workbook getWorkbook() {
         LOGGER.info("Starting to get workbook from service");
-        return xlsService.getWorkbookFromOrders(getUnpackagedOrders());
+        return xlsService.getWorkbookFromOrders(getUnpackagedAndPaidOrders());
     }
 
     public String fileName() {
