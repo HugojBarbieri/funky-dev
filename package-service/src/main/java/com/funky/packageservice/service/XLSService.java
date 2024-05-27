@@ -6,92 +6,107 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
-import static com.funky.packageservice.util.XLSNamesConstant.CLIENT_NOTES;
-import static com.funky.packageservice.util.XLSNamesConstant.SHEET_NAME;
+import static com.funky.packageservice.util.XLSNamesConstant.*;
 
 @Service
 public class XLSService {
 
     private CellStyle greyCellStyle;
     private CellStyle cellStyle;
+    private static int rowIndex = 0;
+    private static int partial_index = 0;
+    private static boolean breakPage = false;
 
+    public XLSService() {
+    }
 
     public Workbook getWorkbookFromOrders(List<OrderDTO> orders) {
         // Create a new Excel workbook
         Workbook workbook = new XSSFWorkbook();
+        Font font = workbook.createFont();
+        short height = (short) 10;
+        font.setFontHeightInPoints(height);
+
+        cellStyle = getCellStyle(workbook, font);
+        greyCellStyle = getGreyCellStyle(workbook);
+
         Sheet sheet = workbook.createSheet(SHEET_NAME);
+        PrintSetup printSetup = sheet.getPrintSetup();
+        printSetup.setPaperSize(PrintSetup.A4_PAPERSIZE);
+        printSetup.setLandscape(false);
 
         // Write data to the Excel file
-        writeDataToSheet(orders, sheet, workbook);
+        writeDataToSheet(orders, sheet);
         return workbook;
     }
 
-    private void writeDataToSheet(List<OrderDTO> orders, Sheet sheet, Workbook workbook) {
-        // Create font with larger size
-        Font font = workbook.createFont();
-        font.setFontHeightInPoints((short) 10); // Adjust font size as needed
-
-        // Create cell style with the larger font
-        cellStyle = getCellStyle(workbook, font);
-
-        // Create a grey cell style with light grey background
-        greyCellStyle = getCellStyle(workbook, cellStyle);
-
-        // Set print properties
-        PrintSetup printSetup = sheet.getPrintSetup();
-        printSetup.setPaperSize(PrintSetup.A4_PAPERSIZE);
-        printSetup.setLandscape(false); // Vertical orientation
-        int rowIndex = 0;
-        int multiplesOf35Passed = 0;
-
+    private void writeDataToSheet(List<OrderDTO> orders, Sheet sheet) {
         for (OrderDTO orderDTO : orders) {
-            if ((rowIndex + 8) / 35 > multiplesOf35Passed) {
-                sheet.setRowBreak(rowIndex - 2);
-                multiplesOf35Passed++;
+            if(breakPage || (partial_index > 25) && orderDTO.getProducts().size() > 8){
+                sheet.setRowBreak(rowIndex);
+                breakPage = false;
+                partial_index = 0;
             }
             // Write order details and customer name
-            writeOrderDetails(sheet, orderDTO, rowIndex, cellStyle, greyCellStyle);
-            rowIndex += 2; // Move to the next row after writing order details and adding an empty row
-            writeOrderNotesDetails(sheet, orderDTO, rowIndex, cellStyle, greyCellStyle);
-            rowIndex += 2;
+            writeOrderDetails(sheet, orderDTO);
+            checkAndIncrement(2); // Move to the next row after writing order details and adding an empty row
+            if(orderDTO.getNote() != null && !"".equals(orderDTO.getNote())) {
+                writeOrderNotesDetails(sheet, orderDTO);
+                checkAndIncrement(2);
+            }
+
             // Write column names for products
-            writeProductHeader(sheet, rowIndex, cellStyle);
-            rowIndex++;
+            writeProductHeader(sheet);
+            checkAndIncrement(1);
 
             // Write product data
-            rowIndex = writeProductData(sheet, orderDTO.getProducts(), rowIndex);
+            writeProductData(sheet, orderDTO.getProducts());
 
             // Add empty row between orders
-            rowIndex++;
-            totalQuantityProducts(sheet, orderDTO.getProducts().size(), rowIndex, cellStyle);
-            rowIndex++;
-            rowIndex++;
+            checkAndIncrement(2);
+            totalQuantityProducts(sheet, orderDTO.getProducts().stream().mapToInt(ProductDTO::getQuantity).sum());
+            checkAndIncrement(2);
 
             // Write a row of dashes between orders
-            writeDashRow(sheet, rowIndex, cellStyle);
-            rowIndex++;
-
+            writeDashRow(sheet);
+            checkAndIncrement(1);
+            if(orderDTO.getOwnerNote() != null) {
+                writeOurNotes(sheet, orderDTO);
+                checkAndIncrement(1);
+                writeDashRow(sheet);
+            }
         }
 
         // Autosize columns after data is written
-        for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
-            sheet.autoSizeColumn(i);
+        Row firstRow = sheet.getRow(0);
+        if (firstRow != null) {
+            for (int i = 0; i < firstRow.getLastCellNum(); i++) {
+                sheet.autoSizeColumn(i);
+            }
         }
+        rowIndex = 0;
     }
 
-    private static CellStyle getCellStyle(Workbook workbook, Font font) {
+    private void checkAndIncrement(int inc) {
+        rowIndex = rowIndex + inc;
+        partial_index = partial_index + inc;
+        breakPage = partial_index > 35;
+    }
+
+    private CellStyle getCellStyle(Workbook workbook, Font font) {
         CellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setFont(font);
         return cellStyle;
     }
 
-    private static CellStyle getCellStyle(Workbook workbook, CellStyle cellStyle) {
+    private CellStyle getGreyCellStyle(Workbook workbook) {
         CellStyle borderedCellStyle = workbook.createCellStyle();
-        borderedCellStyle.cloneStyleFrom(cellStyle); // Copy the style from the default cell style
+        borderedCellStyle.cloneStyleFrom(this.cellStyle); // Copy the style from the default cell style
 
         // Set the border style
         borderedCellStyle.setBorderTop(XSSFCellStyle.BORDER_THIN);
@@ -109,43 +124,43 @@ public class XLSService {
 
     }
 
-    private void writeOrderNotesDetails(Sheet sheet, OrderDTO orderDTO, int rowIndex, CellStyle cellStyle, CellStyle greyCellStyle) {
+    private void writeOrderNotesDetails(Sheet sheet, OrderDTO orderDTO) {
         Row orderRow = sheet.createRow(rowIndex);
-        writeCell(orderRow, 0, CLIENT_NOTES, greyCellStyle);
-        writeCell(orderRow, 1, orderDTO.getNote(), cellStyle);
-        writeCell(orderRow, 2, "Notas Nuestras:", greyCellStyle);
-        writeCell(orderRow, 3, orderDTO.getOwnerNote(), greyCellStyle);
+        writeCell(orderRow, 0, CLIENT_NOTES + ENTER + orderDTO.getNote() , this.greyCellStyle);
+        sheet.addMergedRegion(new CellRangeAddress(orderRow.getRowNum(), orderRow.getRowNum(), 0, 3));
     }
 
-    private void writeOrderDetails(Sheet sheet, OrderDTO orderDTO, int rowIndex, CellStyle cellStyle, CellStyle greyCellStyle) {
+    private void writeOrderDetails(Sheet sheet, OrderDTO orderDTO) {
         Row orderRow = sheet.createRow(rowIndex);
-        writeCell(orderRow, 0, "Orden NRO:", greyCellStyle);
-        writeCell(orderRow, 1, orderDTO.getNumber() + "", greyCellStyle);
-        writeCell(orderRow, 2, "Nombre:", greyCellStyle);
-        writeCell(orderRow, 3, orderDTO.getCustomer().getName(), greyCellStyle);
+        writeCell(orderRow, 0, orderDTO.getCustomer().getName(), this.greyCellStyle);
+        sheet.addMergedRegion(new CellRangeAddress(orderRow.getRowNum(), orderRow.getRowNum(), 0, 1));
+        //writeCell(orderRow, 1, EMPTY, greyCellStyle);
+        writeCell(orderRow, 2, ORDER_NRO, this.greyCellStyle);
+        writeCell(orderRow, 3, orderDTO.getNumber() + "", this.greyCellStyle);
     }
 
-    private void totalQuantityProducts(Sheet sheet, Integer quantityProducts, int rowIndex, CellStyle cellStyle) {
+
+    private void totalQuantityProducts(Sheet sheet, Integer quantityProducts) {
         Row productHeaderRow = sheet.createRow(rowIndex);
-        writeCell(productHeaderRow, 0, "Cantidad Articulos", cellStyle);
-        writeCell(productHeaderRow, 1, quantityProducts + "", cellStyle);
+        writeCell(productHeaderRow, 0, "Cantidad Articulos", this.cellStyle);
+        writeCell(productHeaderRow, 1, quantityProducts + "", this.cellStyle);
     }
-    private void writeProductHeader(Sheet sheet, int rowIndex, CellStyle cellStyle) {
+    private void writeProductHeader(Sheet sheet) {
         Row productHeaderRow = sheet.createRow(rowIndex);
-        writeCell(productHeaderRow, 0, "Producto Nombre", cellStyle);
-        writeCell(productHeaderRow, 1, "Cantidad", cellStyle);
+        writeCell(productHeaderRow, 0, "Producto Nombre", this.cellStyle);
+        writeCell(productHeaderRow, 1, "Cantidad", this.cellStyle);
     }
 
-    private int writeProductData(Sheet sheet, List<ProductDTO> products, int rowIndex) {
+    private void writeProductData(Sheet sheet, List<ProductDTO> products) {
         boolean switchFont = true;
         for (ProductDTO product : products) {
-            CellStyle cellStyle = switchFont ? greyCellStyle : this.cellStyle;
-            Row productRow = sheet.createRow(rowIndex++);
+            CellStyle cellStyle = switchFont ? this.greyCellStyle : this.cellStyle;
+            checkAndIncrement(1);
+            Row productRow = sheet.createRow(rowIndex);
             writeCell(productRow, 0, product.getName(), cellStyle);
             writeCell(productRow, 1, product.getQuantity() + "", cellStyle);
             switchFont = !switchFont;
         }
-        return rowIndex;
     }
 
     private void writeCell(Row row, int column, String value, CellStyle cellStyle) {
@@ -154,8 +169,14 @@ public class XLSService {
         cell.setCellStyle(cellStyle);
     }
 
-    private void writeDashRow(Sheet sheet, int rowIndex, CellStyle cellStyle) {
-        Row dashRow = sheet.createRow(rowIndex);
-        writeCell(dashRow, 0, "#".repeat(35), cellStyle);
+    private void writeOurNotes(Sheet sheet, OrderDTO orderDTO) {
+        Row orderRow = sheet.createRow(rowIndex);
+        writeCell(orderRow, 0, OUR_NOTES + ENTER + orderDTO.getOwnerNote(), this.greyCellStyle);
+        sheet.addMergedRegion(new CellRangeAddress(orderRow.getRowNum(), orderRow.getRowNum(), 0, 3));
+   }
+
+    private void writeDashRow(Sheet sheet) {
+        Row orderRow = sheet.createRow(rowIndex);
+        writeCell(orderRow, 0, "#".repeat(60), this.cellStyle);
     }
 }
