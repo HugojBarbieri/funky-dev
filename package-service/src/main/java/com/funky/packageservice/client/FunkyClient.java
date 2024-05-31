@@ -10,5 +10,5 @@ import java.util.List;
 public interface FunkyClient {
 
     @GetExchange("/funky/orders/unpackaged")
-    public List<OrderDTO> getUnpackageOrders();
+    List<OrderDTO> getUnpackagedOrders();
 }
