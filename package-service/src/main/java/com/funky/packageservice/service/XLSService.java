@@ -1,7 +1,7 @@
 package com.funky.packageservice.service;
 
-import com.funky.packageservice.model.OrderDTO;
-import com.funky.packageservice.model.ProductDTO;
+import com.funky.packageservice.dto.OrderDTO;
+import com.funky.packageservice.dto.ProductDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;

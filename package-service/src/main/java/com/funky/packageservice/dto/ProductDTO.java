@@ -1,4 +1,4 @@
-package com.funky.packageservice.model;
+package com.funky.packageservice.dto;
 
 
 import java.util.List;

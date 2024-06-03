@@ -1,4 +1,4 @@
-package com.funky.packageservice.model;
+package com.funky.packageservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

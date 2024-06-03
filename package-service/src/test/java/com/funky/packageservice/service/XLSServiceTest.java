@@ -1,13 +1,12 @@
 package com.funky.packageservice.service;
 
-import com.funky.packageservice.model.CustomerDTO;
-import com.funky.packageservice.model.OrderDTO;
-import com.funky.packageservice.model.ProductDTO;
+import com.funky.packageservice.dto.CustomerDTO;
+import com.funky.packageservice.dto.OrderDTO;
+import com.funky.packageservice.dto.ProductDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,12 +1,9 @@
 package com.funky.packageservice.repository;
 
+import com.funky.packageservice.model.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Repository
-public class OrderRepository {
-
-
+public interface OrderRepository extends JpaRepository<Order, Long> {
 }
