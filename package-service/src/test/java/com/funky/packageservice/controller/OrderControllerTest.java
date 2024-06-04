@@ -2,6 +2,8 @@ package com.funky.packageservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.funky.packageservice.model.Order;
+import com.funky.packageservice.model.Product;
+import com.funky.packageservice.model.ShipStatus;
 import com.funky.packageservice.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -32,21 +35,22 @@ public class OrderControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public OrderControllerTest(MockMvc mockMvc, OrderService orderService) {
-        this.mockMvc = mockMvc;
-        this.orderService = orderService;
-    }
-
     @Test
     public void testSaveOrder() throws Exception {
-        Order order = new Order(); // Set order details here
+        Order order = createAMock();
         when(orderService.save(any(Order.class))).thenReturn(order);
 
         mockMvc.perform(post("/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(order)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(order.getId()));
+                .andExpect(jsonPath("$.id").value(order.getId()))
+                .andExpect(jsonPath("$.number").value(order.getNumber()))
+                .andExpect(jsonPath("$.tiendaNubeId").value(order.getTiendaNubeId()))
+                .andExpect(jsonPath("$.customer").value(order.getCustomer()))
+                .andExpect(jsonPath("$.shipStatus").value(order.getShipStatus().getName().toUpperCase()))
+                .andExpect(jsonPath("$.products[0].id").value(order.getProducts().get(0).getId()))
+                .andExpect(jsonPath("$.products[0].orderId").value(order.getProducts().get(0).getOrderId()));
     }
 
     @Test
@@ -60,7 +64,7 @@ public class OrderControllerTest {
 
     @Test
     public void testFindAll() throws Exception {
-        List<Order> orders = Arrays.asList(new Order(), new Order()); // Add details if needed
+        List<Order> orders = Collections.singletonList(createAMock()); // Add details if needed
         when(orderService.findAll()).thenReturn(orders);
 
         mockMvc.perform(get("/orders"))
@@ -70,11 +74,27 @@ public class OrderControllerTest {
 
     @Test
     public void testFindById() throws Exception {
-        Order order = new Order(); // Set order details here
+        Order order = createAMock();
         when(orderService.findById(anyLong())).thenReturn(order);
 
         mockMvc.perform(get("/orders/{orderId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(order.getId()));
+    }
+
+    private Order createAMock() {
+        return Order.builder()
+                .products(Collections.singletonList(Product.builder()
+                        .id(1L)
+                        .imagePath("path1")
+                        .orderId(1L)
+                        .ready(false).build()))
+                .id(1L)
+                .number(42)
+                .customer("venta")
+                .packaged(false)
+                .shipStatus(ShipStatus.ANDREANI)
+                .tiendaNubeId(123L)
+                .build();
     }
 }

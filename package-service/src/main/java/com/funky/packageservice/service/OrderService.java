@@ -43,7 +43,7 @@ public class OrderService {
 
     public Order findById(Long id) {
         return orderRepository.findById(id).orElseThrow(() -> new NoSuchElementException(
-                String.format("The id:% does not exist",id)));
+                String.format("The id:%s does not exist",id)));
     }
 
     public Order update(Long id, boolean packaged) {
@@ -54,6 +54,6 @@ public class OrderService {
             orderRepository.save(order);
             return order;
         }
-        throw new NoSuchElementException(String.format("The id:% does not exist",id));
+        throw new NoSuchElementException(String.format("The id:%s does not exist",id));
     }
 }
