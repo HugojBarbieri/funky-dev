@@ -17,6 +17,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String imagePath;
+    private String name;
     private boolean ready;
     private Long orderId;
     private Long productQRId;

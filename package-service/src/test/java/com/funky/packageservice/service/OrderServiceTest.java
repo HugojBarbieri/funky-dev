@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -130,6 +128,7 @@ public class OrderServiceTest {
                         .products(Collections.singletonList(Product.builder()
                                 .id(1L)
                                 .imagePath("path1")
+                                .name("CAMPERA NIÑOS FRISADA FUNKY CELESTE (4 años)")
                                 .orderId(1L)
                                 .ready(false).build()))
                         .id(1L)
@@ -143,6 +142,7 @@ public class OrderServiceTest {
                         .products(Collections.singletonList(Product.builder()
                                 .id(2L)
                                 .imagePath("path2")
+                                .name("PANTALON NIÑOS FRISADO FUNKY VERDE (4 años)")
                                 .orderId(2L)
                                 .ready(false).build()))
                         .id(2L)
