@@ -1,4 +1,4 @@
-package com.funky.packageservice.controller;
+package com.funky.packageservice.resource;
 
 import com.funky.packageservice.model.ProductOrder;
 import com.funky.packageservice.service.ProductOrderService;

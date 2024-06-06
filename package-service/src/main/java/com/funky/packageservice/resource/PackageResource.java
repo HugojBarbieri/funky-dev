@@ -1,4 +1,4 @@
-package com.funky.packageservice.controller;
+package com.funky.packageservice.resource;
 
 import com.funky.packageservice.service.PackageService;
 import org.apache.poi.ss.usermodel.Workbook;
