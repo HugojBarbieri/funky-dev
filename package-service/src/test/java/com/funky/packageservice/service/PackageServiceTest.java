@@ -1,7 +1,7 @@
 package com.funky.packageservice.service;
 
 import com.funky.packageservice.client.FunkyClient;
-import com.funky.packageservice.model.OrderDTO;
+import com.funky.packageservice.dto.OrderDTO;
 import com.funky.packageservice.model.PaymentStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

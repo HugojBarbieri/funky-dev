@@ -1,8 +1,8 @@
 package com.funky.funkyservice.controller;
 
-import com.funky.funkyservice.dto.CustomerDTO;
+import com.funky.funkyservice.dto.CustomerOrderDTO;
 import com.funky.funkyservice.dto.OrderDTO;
-import com.funky.funkyservice.dto.ProductDTO;
+import com.funky.funkyservice.dto.ProductOrderDTO;
 import com.funky.funkyservice.service.FunkyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,13 +74,14 @@ public class FunkyControllerTest {
                 .createdAt(new Date())
                 .note("Some notes")
                 .ownerNote("Owner's notes")
-                .customer(CustomerDTO.builder().name("Customer Name").build())
-                .products(List.of(ProductDTO.builder()
+                .customer(CustomerOrderDTO.builder().name("Customer Name").build())
+                .products(List.of(ProductOrderDTO.builder()
                         .id(1)
                         .depth("10cm")
                         .height("20cm")
                         .name("Product Name")
                         .quantity(2)
+                        .sku("sku-1")
                         .variantValues(List.of("Variant 1", "Variant 2"))
                         .build()))
                 .build();
@@ -92,20 +93,22 @@ public class FunkyControllerTest {
                 .contactEmail("example@example.com")
                 .contactName("John Doe")
                 .contactPhone("123-456-7890")
-                .customer(CustomerDTO.builder()
+                .customer(CustomerOrderDTO.builder()
                         .name("Customer Name")
                         .build())
                 .products(List.of(
-                        ProductDTO.builder()
+                        ProductOrderDTO.builder()
                                 .id(1L)
                                 .name("Product 1")
                                 .quantity(2)
+                                .sku("sku-1")
                                 .depth("10.0")
                                 .build(),
-                        ProductDTO.builder()
+                        ProductOrderDTO.builder()
                                 .id(2L)
                                 .name("Product 2")
                                 .quantity(3)
+                                .sku("sku-2")
                                 .depth("20.0")
                                 .build()))
                 .number(12345)

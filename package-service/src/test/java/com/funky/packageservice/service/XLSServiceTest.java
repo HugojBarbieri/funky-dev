@@ -1,13 +1,12 @@
 package com.funky.packageservice.service;
 
-import com.funky.packageservice.model.CustomerDTO;
-import com.funky.packageservice.model.OrderDTO;
-import com.funky.packageservice.model.ProductDTO;
+import com.funky.packageservice.dto.CustomerOrderDTO;
+import com.funky.packageservice.dto.OrderDTO;
+import com.funky.packageservice.dto.ProductOrderDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,9 +45,9 @@ public class XLSServiceTest {
 
     private OrderDTO createMockOrder() {
         OrderDTO order = mock(OrderDTO.class);
-        CustomerDTO customer = mock(CustomerDTO.class);
-        ProductDTO product1 = mock(ProductDTO.class);
-        ProductDTO product2 = mock(ProductDTO.class);
+        CustomerOrderDTO customer = mock(CustomerOrderDTO.class);
+        ProductOrderDTO product1 = mock(ProductOrderDTO.class);
+        ProductOrderDTO product2 = mock(ProductOrderDTO.class);
 
         when(customer.getName()).thenReturn("Customer Name");
         when(order.getCustomer()).thenReturn(customer);
@@ -58,7 +57,7 @@ public class XLSServiceTest {
         when(product2.getName()).thenReturn("Product 2");
         when(product2.getQuantity()).thenReturn(20);
 
-        List<ProductDTO> products = Arrays.asList(product1, product2);
+        List<ProductOrderDTO> products = Arrays.asList(product1, product2);
 
         when(order.getNumber()).thenReturn(12345);
         when(order.getNote()).thenReturn("Order Note");
@@ -110,15 +109,15 @@ public class XLSServiceTest {
         // Given
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
-        ProductDTO product1 = mock(ProductDTO.class);
-        ProductDTO product2 = mock(ProductDTO.class);
+        ProductOrderDTO product1 = mock(ProductOrderDTO.class);
+        ProductOrderDTO product2 = mock(ProductOrderDTO.class);
 
         when(product1.getName()).thenReturn("Product 1");
         when(product1.getQuantity()).thenReturn(10);
         when(product2.getName()).thenReturn("Product 2");
         when(product2.getQuantity()).thenReturn(20);
 
-        List<ProductDTO> products = Arrays.asList(product1, product2);
+        List<ProductOrderDTO> products = Arrays.asList(product1, product2);
 
         // When
         int rowIndex = xlsService.writeProducts(sheet, products, 0);
@@ -141,13 +140,13 @@ public class XLSServiceTest {
         // Given
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
-        ProductDTO product1 = mock(ProductDTO.class);
-        ProductDTO product2 = mock(ProductDTO.class);
+        ProductOrderDTO product1 = mock(ProductOrderDTO.class);
+        ProductOrderDTO product2 = mock(ProductOrderDTO.class);
 
         when(product1.getQuantity()).thenReturn(10);
         when(product2.getQuantity()).thenReturn(20);
 
-        List<ProductDTO> products = Arrays.asList(product1, product2);
+        List<ProductOrderDTO> products = Arrays.asList(product1, product2);
 
         // When
         int rowIndex = xlsService.writeTotalQuantity(sheet, products, 0);

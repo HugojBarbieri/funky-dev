@@ -1,7 +1,7 @@
 package com.funky.packageservice.service;
 
-import com.funky.packageservice.model.OrderDTO;
-import com.funky.packageservice.model.ProductDTO;
+import com.funky.packageservice.dto.OrderDTO;
+import com.funky.packageservice.dto.ProductOrderDTO;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -106,21 +106,21 @@ public class XLSService {
         return rowIndex + 1;
     }
 
-    int writeProducts(Sheet sheet, List<ProductDTO> products, int rowIndex) {
+    int writeProducts(Sheet sheet, List<ProductOrderDTO> productOrderDTOS, int rowIndex) {
         boolean switchFont = true;
-        for (ProductDTO product : products) {
+        for (ProductOrderDTO productOrderDTO : productOrderDTOS) {
             Row productRow = sheet.createRow(rowIndex++);
             CellStyle currentStyle = switchFont ? greyCellStyle : cellStyle;
-            writeCell(productRow, 0, product.getName(), currentStyle);
-            writeCell(productRow, 1, String.valueOf(product.getQuantity()), currentStyle);
+            writeCell(productRow, 0, productOrderDTO.getName(), currentStyle);
+            writeCell(productRow, 1, String.valueOf(productOrderDTO.getQuantity()), currentStyle);
             switchFont = !switchFont;
         }
         return rowIndex;
     }
 
-    int writeTotalQuantity(Sheet sheet, List<ProductDTO> products, int rowIndex) {
+    int writeTotalQuantity(Sheet sheet, List<ProductOrderDTO> productOrderDTOS, int rowIndex) {
         Row totalRow = sheet.createRow(rowIndex);
-        int totalQuantity = products.stream().mapToInt(ProductDTO::getQuantity).sum();
+        int totalQuantity = productOrderDTOS.stream().mapToInt(ProductOrderDTO::getQuantity).sum();
         writeCell(totalRow, 0, "Cantidad Articulos", cellStyle);
         writeCell(totalRow, 1, String.valueOf(totalQuantity), cellStyle);
         return rowIndex + 2;

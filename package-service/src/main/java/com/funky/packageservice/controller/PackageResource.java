@@ -20,14 +20,14 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/package")
-public class PackageController {
+public class PackageResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PackageController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PackageResource.class);
 
     private final PackageService packageService;
 
     @Autowired
-    public PackageController(PackageService packageService) {
+    public PackageResource(PackageService packageService) {
         this.packageService = packageService;
     }
 

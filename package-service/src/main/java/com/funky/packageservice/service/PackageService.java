@@ -1,7 +1,7 @@
 package com.funky.packageservice.service;
 
 import com.funky.packageservice.client.FunkyClient;
-import com.funky.packageservice.model.OrderDTO;
+import com.funky.packageservice.dto.OrderDTO;
 import com.funky.packageservice.model.PaymentStatus;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
