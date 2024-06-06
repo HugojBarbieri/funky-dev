@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class FunkyControllerTest {
+public class FunkyResourceTest {
 
     private MockMvc mockMvc;
 
@@ -30,12 +30,12 @@ public class FunkyControllerTest {
     private FunkyService funkyService;
 
     @InjectMocks
-    private FunkyController funkyController;
+    private FunkyResource funkyResource;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(funkyController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(funkyResource).build();
     }
 
     @Test

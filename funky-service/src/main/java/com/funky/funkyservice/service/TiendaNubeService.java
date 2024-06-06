@@ -1,6 +1,7 @@
 package com.funky.funkyservice.service;
 
 import com.funky.funkyservice.dto.OrderDTO;
+import com.funky.funkyservice.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -29,15 +30,11 @@ public class TiendaNubeService {
         RestTemplate restTemplate = new RestTemplate();
 
         // Set headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("User-Agent", userAgent);
-        headers.set("Authentication", "bearer " + authToken);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        HttpEntity<String> entity = getHttpEntity();
 
         // Make GET request
         ResponseEntity<OrderDTO[]> response = restTemplate.exchange(
-                baseUrl + "?shipping_status=unpacked&status=open",
+                baseUrl + "/orders?shipping_status=unpacked&status=open",
                 HttpMethod.GET,
                 entity,
                 OrderDTO[].class
@@ -46,15 +43,28 @@ public class TiendaNubeService {
         return response.getBody();
     }
 
-    public URI getBaseUrl() {
-        return baseUrl;
+    public ProductDTO[] getProducts() {
+        RestTemplate restTemplate = new RestTemplate();
+
+        // Set headers
+        HttpEntity<String> entity = getHttpEntity();
+
+        // Make GET request
+        ResponseEntity<ProductDTO[]> response = restTemplate.exchange(
+                baseUrl + "/products",
+                HttpMethod.GET,
+                entity,
+                ProductDTO[].class
+        );
+
+        return response.getBody();
     }
 
-    public String getAuthToken() {
-        return authToken;
-    }
-
-    public String getUserAgent() {
-        return userAgent;
+    private HttpEntity<String> getHttpEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("User-Agent", userAgent);
+        headers.set("Authentication", "bearer " + authToken);
+        return new HttpEntity<>(headers);
     }
 }
