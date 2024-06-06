@@ -1,7 +1,7 @@
 package com.funky.packageservice.service;
 
 import com.funky.packageservice.model.Order;
-import com.funky.packageservice.model.Product;
+import com.funky.packageservice.model.ProductOrder;
 import com.funky.packageservice.model.ShipStatus;
 import com.funky.packageservice.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -125,7 +125,7 @@ public class OrderServiceTest {
 
     private List<Order> createAMockList() {
         return Arrays.asList(Order.builder()
-                        .products(Collections.singletonList(Product.builder()
+                        .productOrders(Collections.singletonList(ProductOrder.builder()
                                 .id(1L)
                                 .imagePath("path1")
                                 .name("CAMPERA NIÑOS FRISADA FUNKY CELESTE (4 años)")
@@ -139,7 +139,7 @@ public class OrderServiceTest {
                         .tiendaNubeId(123L)
                         .build(),
                 Order.builder()
-                        .products(Collections.singletonList(Product.builder()
+                        .productOrders(Collections.singletonList(ProductOrder.builder()
                                 .id(2L)
                                 .imagePath("path2")
                                 .name("PANTALON NIÑOS FRISADO FUNKY VERDE (4 años)")

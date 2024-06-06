@@ -3,7 +3,6 @@ package com.funky.funkyservice.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
@@ -17,8 +16,8 @@ public class Order {
     @JsonProperty("contact_name")
     private String contactName;
     private String contactPhone;
-    private Customer customer;
-    private List<Product> products;
+    private CustomerOrder customerOrder;
+    private List<ProductOrder> productOrders;
     private int number;
     private String shippingStatus;
     private String paymentStatus;

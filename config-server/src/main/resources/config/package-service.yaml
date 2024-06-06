@@ -20,3 +20,8 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
+
+#read form env variable
+qrcode:
+  output:
+    directory: "/Users/javierbarbieri/developer/package-service"

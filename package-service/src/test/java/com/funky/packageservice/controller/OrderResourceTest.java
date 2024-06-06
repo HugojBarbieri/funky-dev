@@ -2,7 +2,7 @@ package com.funky.packageservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.funky.packageservice.model.Order;
-import com.funky.packageservice.model.Product;
+import com.funky.packageservice.model.ProductOrder;
 import com.funky.packageservice.model.ShipStatus;
 import com.funky.packageservice.service.OrderService;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,8 +22,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(OrderController.class)
-public class OrderControllerTest {
+@WebMvcTest(OrderResource.class)
+public class OrderResourceTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,8 +48,8 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.tiendaNubeId").value(order.getTiendaNubeId()))
                 .andExpect(jsonPath("$.customer").value(order.getCustomer()))
                 .andExpect(jsonPath("$.shipStatus").value(order.getShipStatus().getName().toUpperCase()))
-                .andExpect(jsonPath("$.products[0].id").value(order.getProducts().get(0).getId()))
-                .andExpect(jsonPath("$.products[0].orderId").value(order.getProducts().get(0).getOrderId()));
+                .andExpect(jsonPath("$.products[0].id").value(order.getProductOrders().get(0).getId()))
+                .andExpect(jsonPath("$.products[0].orderId").value(order.getProductOrders().get(0).getOrderId()));
     }
 
     @Test
@@ -84,7 +83,7 @@ public class OrderControllerTest {
 
     private Order createAMock() {
         return Order.builder()
-                .products(Collections.singletonList(Product.builder()
+                .productOrders(Collections.singletonList(ProductOrder.builder()
                         .id(1L)
                         .imagePath("path1")
                         .orderId(1L)

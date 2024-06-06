@@ -20,4 +20,6 @@ public class ProductQR {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String qr;
+    private String sku;
+    private Long seq;
 }

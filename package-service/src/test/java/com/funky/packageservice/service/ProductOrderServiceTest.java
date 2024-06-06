@@ -1,6 +1,6 @@
 package com.funky.packageservice.service;
 
-import com.funky.packageservice.model.Product;
+import com.funky.packageservice.model.ProductOrder;
 import com.funky.packageservice.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,77 +20,77 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-public class ProductServiceTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceTest.class);
+public class ProductOrderServiceTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductOrderServiceTest.class);
 
     @Mock
     private ProductRepository productRepository;
 
     @InjectMocks
-    private ProductService productService;
+    private ProductOrderService productOrderService;
 
-    private List<Product> products;
+    private List<ProductOrder> productOrders;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        products = productList();
+        productOrders = productList();
     }
 
     @Test
     public void testFindAll() {
         when(productRepository.findAll()).thenReturn(productList());
 
-        List<Product> products = productService.findAll();
+        List<ProductOrder> productOrders = productOrderService.findAll();
 
-        assertNotNull(products);
-        assertEquals(4, products.size());
+        assertNotNull(productOrders);
+        assertEquals(4, productOrders.size());
         verify(productRepository, times(1)).findAll();
     }
 
     @Test
     public void testSave() {
-        Product product = products.get(0);
+        ProductOrder productOrder = productOrders.get(0);
 
-        when(productRepository.save(any(Product.class))).thenReturn(product);
+        when(productRepository.save(any(ProductOrder.class))).thenReturn(productOrder);
 
-        Product savedProduct = productService.save(product);
+        ProductOrder savedProductOrder = productOrderService.save(productOrder);
 
-        assertNotNull(savedProduct);
-        verify(productRepository, times(1)).save(product);
+        assertNotNull(savedProductOrder);
+        verify(productRepository, times(1)).save(productOrder);
     }
 
     @Test
     public void testDeleteSuccess() {
-        Product product = products.get(2);
-        when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
+        ProductOrder productOrder = productOrders.get(2);
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(productOrder));
 
-        boolean isDeleted = productService.delete(3L);
+        boolean isDeleted = productOrderService.delete(3L);
 
         assertTrue(isDeleted);
         verify(productRepository, times(1)).findById(3L);
-        verify(productRepository, times(1)).delete(product);
+        verify(productRepository, times(1)).delete(productOrder);
     }
 
     @Test
     public void testDeleteFailure() {
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        boolean isDeleted = productService.delete(1L);
+        boolean isDeleted = productOrderService.delete(1L);
 
         assertFalse(isDeleted);
         verify(productRepository, times(1)).findById(1L);
-        verify(productRepository, times(0)).delete(any(Product.class));
+        verify(productRepository, times(0)).delete(any(ProductOrder.class));
     }
 
     @Test
     public void testFindByIdSuccess() {
-        Product product = new Product();
-        when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
+        ProductOrder productOrder = new ProductOrder();
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(productOrder));
 
-        Product foundProduct = productService.findById(1L);
+        ProductOrder foundProductOrder = productOrderService.findById(1L);
 
-        assertNotNull(foundProduct);
+        assertNotNull(foundProductOrder);
         verify(productRepository, times(1)).findById(1L);
     }
 
@@ -99,7 +99,7 @@ public class ProductServiceTest {
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
-            productService.findById(1L);
+            productOrderService.findById(1L);
         });
 
         assertEquals("The id:1 does not exist", exception.getMessage());
@@ -108,16 +108,16 @@ public class ProductServiceTest {
 
     @Test
     public void testUpdateToggleSuccess() {
-        Product product = products.get(0);
-        when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
-        when(productRepository.save(any(Product.class))).thenReturn(product);
+        ProductOrder productOrder = productOrders.get(0);
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(productOrder));
+        when(productRepository.save(any(ProductOrder.class))).thenReturn(productOrder);
 
-        Product updatedProduct = productService.updateToggle(1L);
+        ProductOrder updatedProductOrder = productOrderService.updateToggle(1L);
 
-        assertNotNull(updatedProduct);
-        assertTrue(updatedProduct.isReady());
+        assertNotNull(updatedProductOrder);
+        assertTrue(updatedProductOrder.isReady());
         verify(productRepository, times(1)).findById(1L);
-        verify(productRepository, times(1)).save(product);
+        verify(productRepository, times(1)).save(productOrder);
     }
 
     @Test
@@ -125,34 +125,34 @@ public class ProductServiceTest {
         when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
-            productService.updateToggle(1L);
+            productOrderService.updateToggle(1L);
         });
 
         assertEquals("The id:1 does not exist", exception.getMessage());
         verify(productRepository, times(1)).findById(1L);
     }
 
-    private List<Product> productList() {
+    private List<ProductOrder> productList() {
         return Arrays.asList(
-                Product.builder()
+                ProductOrder.builder()
                         .id(1L)
                         .imagePath("path1")
                         .name("CAMPERA NIÑOS FRISADA FUNKY CELESTE (4 años)")
                         .orderId(1L)
                         .ready(false).build(),
-                Product.builder()
+                ProductOrder.builder()
                         .id(2L)
                         .name("PANTALON NIÑOS FRISADO FUNKY VERDE (4 años)")
                         .imagePath("path2")
                         .orderId(1L)
                         .ready(false).build(),
-                Product.builder()
+                ProductOrder.builder()
                         .id(3L)
                         .name("CAMPERA NIÑOS FRISADA FUNKY CELESTE (3 años)")
                         .imagePath("path3")
                         .orderId(1L)
                         .ready(true).build(),
-                Product.builder()
+                ProductOrder.builder()
                         .id(4L)
                         .name("PANTALON NIÑOS FRISADO FUNKY CELESTE (3 años)")
                         .imagePath("path4")

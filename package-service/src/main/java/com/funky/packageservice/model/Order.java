@@ -25,5 +25,5 @@ public class Order {
     private ShipStatus shipStatus;
     private String customer;
     @OneToMany(mappedBy = "orderId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products;
+    private List<ProductOrder> productOrders;
 }
