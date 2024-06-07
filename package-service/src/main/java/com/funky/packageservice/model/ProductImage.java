@@ -1,5 +1,6 @@
 package com.funky.packageservice.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,20 +8,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "product_image")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductOrder {
+public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String imagePath;
-    private String name;
-    private String sku;
-    private boolean ready;
-    private Long orderId;
-    private Long productQRId;
-    //TODO add url to image
+    private Long productId;
+    private String src;
 }

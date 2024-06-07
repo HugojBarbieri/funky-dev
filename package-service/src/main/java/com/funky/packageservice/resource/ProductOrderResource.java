@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/products-order")
 public class ProductOrderResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderResource.class);
 

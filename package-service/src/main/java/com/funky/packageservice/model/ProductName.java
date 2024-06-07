@@ -7,20 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "product_name")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductOrder {
+public class ProductName {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String imagePath;
-    private String name;
-    private String sku;
-    private boolean ready;
-    private Long orderId;
-    private Long productQRId;
-    //TODO add url to image
+    private String es;
 }

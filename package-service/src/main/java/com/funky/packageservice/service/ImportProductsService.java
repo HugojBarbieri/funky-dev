@@ -1,8 +1,11 @@
 package com.funky.packageservice.service;
 
 import com.funky.packageservice.client.FunkyClient;
+import com.funky.packageservice.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ImportProductsService {
@@ -14,7 +17,10 @@ public class ImportProductsService {
         this.funkyClient = funkyClient;
     }
 
-    public boolean saveProducts() {
-        return true;
+    public List<ProductDTO> getProducts() {
+        return funkyClient.getProducts();
     }
+
+    //TODO do the save
+    //TODO look the order if it has the correct photo, then use that one, not the one in the product
 }

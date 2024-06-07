@@ -46,7 +46,7 @@ public class ProductOrderResourceTest {
         ProductOrder productOrder = productOrders.get(0);
         when(productOrderService.save(any(ProductOrder.class))).thenReturn(productOrder);
 
-        mockMvc.perform(post("/products")
+        mockMvc.perform(post("/products-order")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productOrder)))
                 .andExpect(status().isOk())
@@ -60,7 +60,7 @@ public class ProductOrderResourceTest {
     void deleteProduct() throws Exception {
         when(productOrderService.delete(1L)).thenReturn(true);
 
-        mockMvc.perform(delete("/products/1"))
+        mockMvc.perform(delete("/products-order/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
     }
@@ -69,7 +69,7 @@ public class ProductOrderResourceTest {
     void findAll() throws Exception {
         when(productOrderService.findAll()).thenReturn(productOrders);
 
-        mockMvc.perform(get("/products"))
+        mockMvc.perform(get("/products-order"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].imagePath").value("path1"))
