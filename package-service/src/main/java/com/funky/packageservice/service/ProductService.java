@@ -1,9 +1,5 @@
 package com.funky.packageservice.service;
 
-import com.funky.packageservice.model.Product;
-import com.funky.packageservice.model.ProductOrder;
-import com.funky.packageservice.repository.ProductOrderRepository;
-import com.funky.packageservice.repository.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

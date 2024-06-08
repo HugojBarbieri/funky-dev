@@ -2,17 +2,10 @@ package com.funky.packageservice.service;
 
 import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.dto.ProductDTO;
-import com.funky.packageservice.model.Product;
-import com.funky.packageservice.model.ProductImage;
-import com.funky.packageservice.repository.ProductImageRepository;
-import com.funky.packageservice.repository.ProductNameRepository;
-import com.funky.packageservice.repository.ProductRepository;
-import com.funky.packageservice.repository.ProductVariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ImportProductsService {

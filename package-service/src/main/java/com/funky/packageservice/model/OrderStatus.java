@@ -1,11 +1,8 @@
 package com.funky.packageservice.model;
 
 public enum OrderStatus {
-    ON_HOLD("on_hold"),
-    ACTIVE("active"),
-    INACTIVE("inactive"),
-    FINISHED("finished"),
-    CANCEL("cancel");
+    PACKAGED("packaged"),
+    UNPACKAGED("unpackaged");
 
     private final String name;
 

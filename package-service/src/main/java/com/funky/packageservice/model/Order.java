@@ -21,7 +21,6 @@ public class Order {
     private Long id;
     private Long tiendaNubeId;
     private int number;
-    private boolean packaged;
     private OrderStatus orderStatus;
     private ShipStatus shipStatus;
     private String customer;

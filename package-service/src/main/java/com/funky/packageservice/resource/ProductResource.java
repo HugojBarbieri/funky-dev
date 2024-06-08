@@ -1,7 +1,6 @@
 package com.funky.packageservice.resource;
 
 import com.funky.packageservice.dto.ProductDTO;
-import com.funky.packageservice.model.Product;
 import com.funky.packageservice.service.ImportProductsService;
 import com.funky.packageservice.service.ProductService;
 import org.slf4j.Logger;

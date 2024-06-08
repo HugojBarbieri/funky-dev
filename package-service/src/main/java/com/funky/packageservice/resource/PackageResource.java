@@ -1,6 +1,6 @@
 package com.funky.packageservice.resource;
 
-import com.funky.packageservice.service.PackageService;
+import com.funky.packageservice.service.PackageServiceImpl;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,18 +24,18 @@ public class PackageResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageResource.class);
 
-    private final PackageService packageService;
+    private final PackageServiceImpl packageServiceImpl;
 
     @Autowired
-    public PackageResource(PackageService packageService) {
-        this.packageService = packageService;
+    public PackageResource(PackageServiceImpl packageServiceImpl) {
+        this.packageServiceImpl = packageServiceImpl;
     }
 
     @GetMapping("/download-excel")
     public ResponseEntity<byte[]> downloadExcel() {
         LOGGER.info("Calling /download-excel endpoint");
         try {
-            Workbook workbook = packageService.getWorkbook();
+            Workbook workbook = packageServiceImpl.getWorkbook();
 
             // Convert the workbook to a byte array
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -44,7 +44,7 @@ public class PackageResource {
 
             // Set headers for the response
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + packageService.fileName());
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + packageServiceImpl.fileName());
             headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 
             return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
@@ -58,9 +58,9 @@ public class PackageResource {
     public ResponseEntity<String> saveExcel() {
         LOGGER.info("Calling /save-excel endpoint");
         try {
-            Workbook workbook = packageService.getWorkbook();
+            Workbook workbook = packageServiceImpl.getWorkbook();
             // Save the workbook to a file
-            FileOutputStream fileOut = new FileOutputStream(packageService.fileName());
+            FileOutputStream fileOut = new FileOutputStream(packageServiceImpl.fileName());
             workbook.write(fileOut);
             fileOut.close();
 

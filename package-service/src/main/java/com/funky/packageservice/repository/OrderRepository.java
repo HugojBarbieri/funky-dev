@@ -1,7 +1,6 @@
 package com.funky.packageservice.repository;
 
 import com.funky.packageservice.model.Order;
-import com.funky.packageservice.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

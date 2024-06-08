@@ -17,16 +17,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class PackageService {
+public class PackageServiceImpl {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PackageService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PackageServiceImpl.class);
 
     private final XLSService xlsService;
     private final FunkyClient funkyClient;
     private final OrderService orderService;
 
     @Autowired
-    public PackageService(XLSService xlsService, FunkyClient funkyClient, OrderService orderService) {
+    public PackageServiceImpl(XLSService xlsService, FunkyClient funkyClient, OrderService orderService) {
         this.xlsService = xlsService;
         this.funkyClient = funkyClient;
         this.orderService = orderService;

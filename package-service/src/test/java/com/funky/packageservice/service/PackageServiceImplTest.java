@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PackageServiceTest {
+public class PackageServiceImplTest {
 
     @Mock
     private XLSService xlsService;
@@ -34,16 +34,16 @@ public class PackageServiceTest {
     private FunkyClient funkyClient;
 
     @InjectMocks
-    private PackageService packageService;
+    private PackageServiceImpl packageServiceImpl;
 
     @InjectMocks
     private OrderService orderService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PackageServiceTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PackageServiceImplTest.class);
 
     @BeforeEach
     public void setUp() {
-        packageService = new PackageService(xlsService, funkyClient, orderService);
+        packageServiceImpl = new PackageServiceImpl(xlsService, funkyClient, orderService);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class PackageServiceTest {
         when(funkyClient.getUnpackagedOrders()).thenReturn(mockOrders);
         when(xlsService.getWorkbookFromOrders(mockOrders)).thenReturn(mockWorkbook);
 
-        Workbook workbook = packageService.getWorkbook();
+        Workbook workbook = packageServiceImpl.getWorkbook();
         assertNotNull(workbook);
         assertEquals(mockWorkbook, workbook);
 
@@ -66,7 +66,7 @@ public class PackageServiceTest {
 
         try (MockedStatic<LocalDate> mockedLocalDate = mockStatic(LocalDate.class, CALLS_REAL_METHODS)) {
             mockedLocalDate.when(LocalDate::now).thenReturn(fixedDate);
-            String actualFileName = packageService.fileName();
+            String actualFileName = packageServiceImpl.fileName();
             assertEquals("orders_20_May.xlsx", actualFileName);
         }
     }
@@ -88,7 +88,7 @@ public class PackageServiceTest {
         when(funkyClient.getUnpackagedOrders()).thenReturn(unpackagedOrders);
 
         // When
-        List<OrderDTO> result = packageService.getUnpackagedAndPaidOrders();
+        List<OrderDTO> result = packageServiceImpl.getUnpackagedAndPaidOrders();
 
         // Then
         List<OrderDTO> expected = unpackagedOrders.stream()

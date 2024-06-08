@@ -50,7 +50,6 @@ public class OrderService {
         Optional<Order> orderUpdate = orderRepository.findById(id);
         if(orderUpdate.isPresent()) {
             Order order = orderUpdate.get();
-            order.setPackaged(packaged);
             orderRepository.save(order);
             return order;
         }
