@@ -21,6 +21,5 @@ public class ProductOrder {
     private String sku;
     private boolean ready;
     private Long orderId;
-    private Long productQRId;
-    //TODO add url to image
+    private String imageUrl;
 }

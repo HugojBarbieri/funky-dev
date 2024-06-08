@@ -14,5 +14,6 @@ public record ProductOrderDTO(
         String name,
         int quantity,
         String sku,
-        @JsonProperty("variant_values") List<String> variantValues
+        @JsonProperty("variant_values") List<String> variantValues,
+        ProductOrderImageDTO image
 ) {}

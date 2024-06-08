@@ -20,5 +20,6 @@ public class ProductOrderDTO {
     private String sku;
     private int quantity;
     private List<String> variantValues;
+    private ProductOrderImageDTO image;
 
 }

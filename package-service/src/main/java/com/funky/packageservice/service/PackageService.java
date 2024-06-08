@@ -2,6 +2,7 @@ package com.funky.packageservice.service;
 
 import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.dto.OrderDTO;
+import com.funky.packageservice.model.Order;
 import com.funky.packageservice.model.PaymentStatus;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,17 +23,27 @@ public class PackageService {
 
     private final XLSService xlsService;
     private final FunkyClient funkyClient;
+    private final OrderService orderService;
 
     @Autowired
-    public PackageService(XLSService xlsService, FunkyClient funkyClient) {
+    public PackageService(XLSService xlsService, FunkyClient funkyClient, OrderService orderService) {
         this.xlsService = xlsService;
         this.funkyClient = funkyClient;
+        this.orderService = orderService;
     }
 
     public List<OrderDTO> getUnpackagedAndPaidOrders() {
         return funkyClient.getUnpackagedOrders().stream()
                 .filter(orderDTO -> PaymentStatus.PAID.getName()
                         .equals(orderDTO.getPaymentStatus())).collect(Collectors.toList());
+    }
+
+    public Optional<List<Order>> importOrders() {
+        List<OrderDTO> orderDTOS = getUnpackagedAndPaidOrders();
+        //TODO find all orders unpackaged and saved it,
+        //
+        return null;
+
     }
 
     public List<OrderDTO> getUnpackagedOrders() {

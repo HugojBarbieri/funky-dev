@@ -3,6 +3,7 @@ package com.funky.packageservice.service;
 import com.funky.packageservice.client.FunkyClient;
 import com.funky.packageservice.dto.OrderDTO;
 import com.funky.packageservice.model.PaymentStatus;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,15 +14,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.apache.poi.ss.usermodel.Workbook;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PackageServiceTest {
@@ -35,11 +36,14 @@ public class PackageServiceTest {
     @InjectMocks
     private PackageService packageService;
 
+    @InjectMocks
+    private OrderService orderService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageServiceTest.class);
 
     @BeforeEach
     public void setUp() {
-        packageService = new PackageService(xlsService, funkyClient);
+        packageService = new PackageService(xlsService, funkyClient, orderService);
     }
 
     @Test
