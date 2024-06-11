@@ -1,156 +1,134 @@
 package com.funky.packageservice.service;
 
 import com.funky.packageservice.model.Order;
-import com.funky.packageservice.model.ProductOrder;
-import com.funky.packageservice.model.ShipStatus;
+import com.funky.packageservice.model.OrderStatus;
 import com.funky.packageservice.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
+
     @Mock
     private OrderRepository orderRepository;
 
     @InjectMocks
     private OrderService orderService;
 
+    private Order order1;
+    private Order order2;
+
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
+    void setUp() {
+        order1 = new Order();
+        order1.setId(1L);
+        order1.setOrderStatus(OrderStatus.PACKAGED);
+
+        order2 = new Order();
+        order2.setId(2L);
+        order2.setOrderStatus(OrderStatus.UNPACKAGED);
     }
 
     @Test
-    public void testFindAll() {
-        when(orderRepository.findAll()).thenReturn(createAMockList());
+    void testFindAll() {
+        when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
 
         List<Order> orders = orderService.findAll();
 
-        assertNotNull(orders);
-        assertEquals(2, orders.size());
+        assertThat(orders).hasSize(2);
         verify(orderRepository, times(1)).findAll();
     }
 
     @Test
-    public void testSave() {
-        Order order = createAMockList().get(0);
-        when(orderRepository.save(any(Order.class))).thenReturn(order);
+    void testSave() {
+        when(orderRepository.save(any(Order.class))).thenReturn(order1);
 
-        Order savedOrder = orderService.save(order);
+        Order savedOrder = orderService.save(order1);
 
-        assertNotNull(savedOrder);
-        verify(orderRepository, times(1)).save(order);
+        assertThat(savedOrder).isEqualTo(order1);
+        verify(orderRepository, times(1)).save(order1);
     }
 
     @Test
-    public void testDeleteSuccess() {
-        Order order = createAMockList().get(0);
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
+    void testDeleteExistingOrder() {
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order1));
 
         boolean isDeleted = orderService.delete(1L);
 
-        assertTrue(isDeleted);
+        assertThat(isDeleted).isTrue();
         verify(orderRepository, times(1)).findById(1L);
-        verify(orderRepository, times(1)).delete(order);
+        verify(orderRepository, times(1)).delete(order1);
     }
 
     @Test
-    public void testDeleteFailure() {
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.empty());
+    void testDeleteNonExistingOrder() {
+        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
 
         boolean isDeleted = orderService.delete(1L);
 
-        assertFalse(isDeleted);
+        assertThat(isDeleted).isFalse();
         verify(orderRepository, times(1)).findById(1L);
         verify(orderRepository, times(0)).delete(any(Order.class));
     }
 
     @Test
-    public void testFindByIdSuccess() {
-        Order order = createAMockList().get(1);
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
+    void testFindById() {
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order1));
 
-        Order foundOrder = orderService.findById(2L);
+        Optional<Order> foundOrder = orderService.findById(1L);
 
-        assertNotNull(foundOrder);
+        assertThat(foundOrder).isPresent();
+        assertThat(foundOrder.get()).isEqualTo(order1);
+        verify(orderRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void testFindByPackaged() {
+        when(orderRepository.findByOrderStatus(OrderStatus.PACKAGED)).thenReturn(Arrays.asList(order1));
+
+        List<Order> packagedOrders = orderService.findByPackaged();
+
+        assertThat(packagedOrders).hasSize(1);
+        assertThat(packagedOrders.get(0)).isEqualTo(order1);
+        verify(orderRepository, times(1)).findByOrderStatus(OrderStatus.PACKAGED);
+    }
+
+    @Test
+    void testPackagedExistingOrder() {
+        when(orderRepository.findById(2L)).thenReturn(Optional.of(order2));
+        when(orderRepository.save(any(Order.class))).thenReturn(order2);
+
+        Order packagedOrder = orderService.packaged(2L);
+
+        assertThat(packagedOrder.getOrderStatus()).isEqualTo(OrderStatus.PACKAGED);
         verify(orderRepository, times(1)).findById(2L);
+        verify(orderRepository, times(1)).save(order2);
     }
 
     @Test
-    public void testFindByIdFailure() {
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.empty());
+    void testPackagedNonExistingOrder() {
+        when(orderRepository.findById(3L)).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
-            orderService.findById(1L);
+            orderService.packaged(3L);
         });
 
-        assertEquals("The id:1 does not exist", exception.getMessage());
-        verify(orderRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    public void testUpdateSuccess() {
-        Order order = createAMockList().get(0);
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
-        when(orderRepository.save(any(Order.class))).thenReturn(order);
-
-        Order updatedOrder = orderService.update(1L, true);
-
-        assertNotNull(updatedOrder);
-        assertTrue(updatedOrder.isPackaged());
-        verify(orderRepository, times(1)).findById(1L);
-        verify(orderRepository, times(1)).save(order);
-    }
-
-    @Test
-    public void testUpdateFailure() {
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
-            orderService.update(1L, true);
-        });
-
-        assertEquals("The id:1 does not exist", exception.getMessage());
-        verify(orderRepository, times(1)).findById(1L);
-    }
-
-    private List<Order> createAMockList() {
-        return Arrays.asList(Order.builder()
-                        .productOrders(Collections.singletonList(ProductOrder.builder()
-                                .id(1L)
-                                .imagePath("path1")
-                                .name("CAMPERA NIÑOS FRISADA FUNKY CELESTE (4 años)")
-                                .orderId(1L)
-                                .ready(false).build()))
-                        .id(1L)
-                        .number(42)
-                        .customer("venta")
-                        .packaged(false)
-                        .shipStatus(ShipStatus.ANDREANI)
-                        .tiendaNubeId(123L)
-                        .build(),
-                Order.builder()
-                        .productOrders(Collections.singletonList(ProductOrder.builder()
-                                .id(2L)
-                                .imagePath("path2")
-                                .name("PANTALON NIÑOS FRISADO FUNKY VERDE (4 años)")
-                                .orderId(2L)
-                                .ready(false).build()))
-                        .id(2L)
-                        .number(84)
-                        .customer("venta2")
-                        .packaged(false)
-                        .shipStatus(ShipStatus.CORREO_ARGENTINO)
-                        .tiendaNubeId(124L)
-                        .build());
+        assertThat(exception.getMessage()).isEqualTo("The id:3 does not exist");
+        verify(orderRepository, times(1)).findById(3L);
+        verify(orderRepository, times(0)).save(any(Order.class));
     }
 }

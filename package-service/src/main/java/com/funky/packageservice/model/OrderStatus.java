@@ -2,7 +2,8 @@ package com.funky.packageservice.model;
 
 public enum OrderStatus {
     PACKAGED("packaged"),
-    UNPACKAGED("unpackaged");
+    UNPACKAGED("unpackaged"),
+    CANCELED("canceled");
 
     private final String name;
 

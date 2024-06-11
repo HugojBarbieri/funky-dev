@@ -18,9 +18,9 @@ public class EmailScheduler {
     // Define the scheduled task to call the sendEmail endpoint
     @Scheduled(cron = "${scheduler.email.cron}")
     public void sendEmailJob() {
-        String urlSaveExcel = "http://localhost:8082/funky/save-excel"; // Change URL as per your application
+        String urlSaveExcel = "http://FUNKY-SERVICE:8082/funky/save-excel"; // Change URL as per your application
         restTemplate.postForObject(urlSaveExcel, null, String.class);
-        String url = "http://localhost:8082/sendEmail"; // Change URL as per your application
+        String url = "http://FUNKY-SERVICE:8082/sendEmail"; // Change URL as per your application
         restTemplate.postForObject(url, null, String.class);
     }
 }

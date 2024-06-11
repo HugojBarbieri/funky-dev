@@ -1,4 +1,4 @@
-package com.funky.funkyjobs.controller;
+package com.funky.packageservice.config;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
