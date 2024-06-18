@@ -2,8 +2,11 @@ server:
   port: 8088
 
 spring:
-  profiles:
-    active: native
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/HugojBarbieri/application-config/
   application:
     name: config-server
 
@@ -11,7 +14,9 @@ management:
   tracing:
     sampling:
       probability: 1.0
-  #endpoints:
-   # web:
-    #  exposure:
-     #   include: *
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+

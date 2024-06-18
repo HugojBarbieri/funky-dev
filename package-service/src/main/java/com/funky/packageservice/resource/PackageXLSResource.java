@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 
 
 @RestController
-@RequestMapping("/package-xls")
+@RequestMapping("/package/package-xls")
 public class PackageXLSResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PackageXLSResource.class);

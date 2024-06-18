@@ -1,31 +1,18 @@
 package com.funky.packageservice.client;
 
-import com.funky.packageservice.config.RestTemplateConfig;
 import com.funky.packageservice.dto.OrderDTO;
 import com.funky.packageservice.dto.ProductDTO;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-@Component
-public class FunkyClient {
+@FeignClient(name = "funky-service")
+public interface FunkyClient {
 
-    private final RestTemplateConfig restTemplateConfig;
+    @GetMapping("/funky/orders/unpackaged")
+    List<OrderDTO> getUnpackagedOrders();
 
-    public FunkyClient(RestTemplateConfig restTemplateConfig) {
-        this.restTemplateConfig = restTemplateConfig;
-    }
-
-    public List<OrderDTO> getUnpackagedOrders() {
-        ResponseEntity<List<OrderDTO>> ordersDTO = restTemplateConfig.restTemplate().exchange("http://FUNKY-SERVICE:8082/funky/orders/unpackaged", HttpMethod.GET, null, new ParameterizedTypeReference<List<OrderDTO>>(){});
-        return ordersDTO.getBody();
-    };
-
-    public List<ProductDTO> getProducts() {
-        ResponseEntity<List<ProductDTO>> productsDTO = restTemplateConfig.restTemplate().exchange("http://FUNKY-SERVICE:8082/funky/products", HttpMethod.GET, null, new ParameterizedTypeReference<List<ProductDTO>>(){});
-        return productsDTO.getBody();
-    }
+    @GetMapping("/funky/products")
+    List<ProductDTO> getProducts();
 }

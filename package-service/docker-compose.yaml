@@ -1,4 +1,11 @@
 services:
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - funky-network
   postgres:
     container_name: postgres_container
     image: postgres

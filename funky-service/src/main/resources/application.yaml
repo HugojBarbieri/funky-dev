@@ -3,6 +3,7 @@ spring:
     name: funky-service
   config:
     import: "optional:configserver:http://localhost:8088"
+    #profiles: dev
 
 configtn:
   base-url: ${BASE_URL}

@@ -31,8 +31,7 @@ public class TiendaNubeService {
 
         // Set headers
         HttpEntity<String> entity = getHttpEntity();
-
-        // Make GET request
+        // TODO looks like is responding with 404 when no open
         ResponseEntity<OrderDTO[]> response = restTemplate.exchange(
                 baseUrl + "/orders?shipping_status=unpacked&status=open",
                 HttpMethod.GET,

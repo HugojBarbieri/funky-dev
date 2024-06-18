@@ -22,8 +22,15 @@ public class FunkyService {
     }
 
     public List<OrderDTO> getUnpackagedOrders() {
-        List<OrderDTO> orders = new ArrayList<>(Arrays.asList(tiendaNubeService.getUnpackagedOrders()));
-        return orders.stream().sorted(Comparator.comparing(OrderDTO::createdAt).reversed().thenComparing(OrderDTO::number)).collect(Collectors.toList());
+        List<OrderDTO> unpackagedOrders;
+        try {
+            unpackagedOrders = Arrays.asList(tiendaNubeService.getUnpackagedOrders());
+        } catch (Exception e) {
+            //TODO add log when error happens
+            return new ArrayList<>();
+        }
+
+        return unpackagedOrders.stream().sorted(Comparator.comparing(OrderDTO::createdAt).reversed().thenComparing(OrderDTO::number)).collect(Collectors.toList());
     }
 
     public List<ProductDTO> getProducts() {
