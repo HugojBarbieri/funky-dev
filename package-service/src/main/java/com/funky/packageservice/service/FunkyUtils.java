@@ -5,6 +5,7 @@ import com.funky.packageservice.dto.OrderDTO;
 import com.funky.packageservice.dto.ProductDTO;
 import com.funky.packageservice.model.PaymentStatus;
 import com.funky.packageservice.model.ProductOrder;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
