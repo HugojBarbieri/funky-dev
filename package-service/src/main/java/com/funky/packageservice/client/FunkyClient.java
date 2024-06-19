@@ -1,14 +1,18 @@
 package com.funky.packageservice.client;
 
 import com.funky.packageservice.dto.OrderDTO;
-import org.springframework.web.service.annotation.GetExchange;
-import org.springframework.web.service.annotation.HttpExchange;
+import com.funky.packageservice.dto.ProductDTO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-@HttpExchange
+@FeignClient(name = "funky-service")
 public interface FunkyClient {
 
-    @GetExchange("/funky/orders/unpackaged")
+    @GetMapping("/funky/orders/unpackaged")
     List<OrderDTO> getUnpackagedOrders();
+
+    @GetMapping("/funky/products")
+    List<ProductDTO> getProducts();
 }

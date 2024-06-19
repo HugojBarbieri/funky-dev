@@ -1,4 +1,4 @@
-package com.funky.packageservice.controller;
+package com.funky.packageservice.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.funky.packageservice.model.Order;
@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -47,9 +48,7 @@ public class OrderResourceTest {
                 .andExpect(jsonPath("$.number").value(order.getNumber()))
                 .andExpect(jsonPath("$.tiendaNubeId").value(order.getTiendaNubeId()))
                 .andExpect(jsonPath("$.customer").value(order.getCustomer()))
-                .andExpect(jsonPath("$.shipStatus").value(order.getShipStatus().getName().toUpperCase()))
-                .andExpect(jsonPath("$.products[0].id").value(order.getProductOrders().get(0).getId()))
-                .andExpect(jsonPath("$.products[0].orderId").value(order.getProductOrders().get(0).getOrderId()));
+                .andExpect(jsonPath("$.shipStatus").value(order.getShipStatus().getName().toUpperCase()));
     }
 
     @Test
@@ -74,7 +73,7 @@ public class OrderResourceTest {
     @Test
     public void testFindById() throws Exception {
         Order order = createAMock();
-        when(orderService.findById(anyLong())).thenReturn(order);
+        when(orderService.findById(anyLong())).thenReturn(Optional.of(order));
 
         mockMvc.perform(get("/orders/{orderId}", 1L))
                 .andExpect(status().isOk())
@@ -83,15 +82,9 @@ public class OrderResourceTest {
 
     private Order createAMock() {
         return Order.builder()
-                .productOrders(Collections.singletonList(ProductOrder.builder()
-                        .id(1L)
-                        .imagePath("path1")
-                        .orderId(1L)
-                        .ready(false).build()))
                 .id(1L)
                 .number(42)
                 .customer("venta")
-                .packaged(false)
                 .shipStatus(ShipStatus.ANDREANI)
                 .tiendaNubeId(123L)
                 .build();

@@ -1,6 +1,7 @@
 package com.funky.funkyservice.controller;
 
 import com.funky.funkyservice.dto.OrderDTO;
+import com.funky.funkyservice.dto.ProductDTO;
 import com.funky.funkyservice.service.FunkyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +14,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/funky")
-public class FunkyController {
+public class FunkyResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FunkyController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FunkyResource.class);
 
     private final FunkyService funkyService;
 
     @Autowired
-    public FunkyController(FunkyService funkyService) {
+    public FunkyResource(FunkyService funkyService) {
         this.funkyService = funkyService;
     }
 
@@ -29,5 +30,12 @@ public class FunkyController {
         LOGGER.info("Get all un-package orders:");
 
         return funkyService.getUnpackagedOrders();
+    }
+
+    @GetMapping("/products")
+    public List<ProductDTO> getProducts() {
+        LOGGER.info("Get all products:");
+
+        return funkyService.getProducts();
     }
 }

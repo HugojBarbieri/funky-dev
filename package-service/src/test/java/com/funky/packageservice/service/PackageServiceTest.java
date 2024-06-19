@@ -1,96 +1,107 @@
 package com.funky.packageservice.service;
 
-import com.funky.packageservice.client.FunkyClient;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import com.funky.packageservice.dto.OrderDTO;
-import com.funky.packageservice.model.PaymentStatus;
+import com.funky.packageservice.model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.apache.poi.ss.usermodel.Workbook;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
 public class PackageServiceTest {
 
     @Mock
-    private XLSService xlsService;
+    private FunkyUtils funkyUtils;
 
     @Mock
-    private FunkyClient funkyClient;
+    private OrderService orderService;
 
     @InjectMocks
     private PackageService packageService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PackageServiceTest.class);
+    private Order packagedOrder1;
+    private Order packagedOrder2;
+    private OrderDTO unpackagedOrder1;
+    private OrderDTO unpackagedOrder2;
 
     @BeforeEach
-    public void setUp() {
-        packageService = new PackageService(xlsService, funkyClient);
+    void setUp() {
+        packagedOrder1 = new Order();
+        packagedOrder1.setNumber(1);
+        packagedOrder1.setTiendaNubeId(101L);
+
+        packagedOrder2 = new Order();
+        packagedOrder2.setNumber(2);
+        packagedOrder2.setTiendaNubeId(102L);
+
+        unpackagedOrder1 = new OrderDTO();
+        unpackagedOrder1.setNumber(1);
+        unpackagedOrder1.setId(101L);
+
+        unpackagedOrder2 = new OrderDTO();
+        unpackagedOrder2.setNumber(3);
+        unpackagedOrder2.setId(103L);
     }
 
     @Test
-    public void testGetWorkbook() {
-        Workbook mockWorkbook = mock(Workbook.class);
-        List<OrderDTO> mockOrders = new ArrayList<>();
-        when(funkyClient.getUnpackagedOrders()).thenReturn(mockOrders);
-        when(xlsService.getWorkbookFromOrders(mockOrders)).thenReturn(mockWorkbook);
+    void testGetUnpackagedOrders_MatchingOrders() {
+        when(orderService.findByPackaged()).thenReturn(Arrays.asList(packagedOrder1, packagedOrder2));
+        when(funkyUtils.getUnpackagedAndPaidOrders()).thenReturn(Arrays.asList(unpackagedOrder1, unpackagedOrder2));
 
-        Workbook workbook = packageService.getWorkbook();
-        assertNotNull(workbook);
-        assertEquals(mockWorkbook, workbook);
+        Optional<List<OrderDTO>> result = packageService.getUnpackagedOrders();
 
-        verify(xlsService, times(1)).getWorkbookFromOrders(anyList());
+        assertThat(result).isPresent();
+        assertThat(result.get().size()).isEqualTo(1);
+        verify(orderService, times(1)).findByPackaged();
+        verify(funkyUtils, times(1)).getUnpackagedAndPaidOrders();
     }
 
     @Test
-    public void testFileName() {
-        LocalDate fixedDate = LocalDate.of(2024, 5, 20);
+    void testGetUnpackagedOrders_NoMatchingOrders() {
+        when(orderService.findByPackaged()).thenReturn(Arrays.asList(packagedOrder1, packagedOrder2));
+        when(funkyUtils.getUnpackagedAndPaidOrders()).thenReturn(Collections.singletonList(unpackagedOrder2));
 
-        try (MockedStatic<LocalDate> mockedLocalDate = mockStatic(LocalDate.class, CALLS_REAL_METHODS)) {
-            mockedLocalDate.when(LocalDate::now).thenReturn(fixedDate);
-            String actualFileName = packageService.fileName();
-            assertEquals("orders_20_May.xlsx", actualFileName);
-        }
+        Optional<List<OrderDTO>> result = packageService.getUnpackagedOrders();
+
+        assertThat(result).isPresent();
+        assertThat(result.get().size()).isEqualTo(1);
+        verify(orderService, times(1)).findByPackaged();
+        verify(funkyUtils, times(1)).getUnpackagedAndPaidOrders();
     }
 
     @Test
-    public void testGetUnpackagedAndPaidOrders() {
-        // Given
-        OrderDTO order1 = new OrderDTO();
-        order1.setPaymentStatus(PaymentStatus.PAID.getName());
+    void testGetUnpackagedOrders_EmptyPackagedOrders() {
+        when(orderService.findByPackaged()).thenReturn(Collections.emptyList());
+        when(funkyUtils.getUnpackagedAndPaidOrders()).thenReturn(Arrays.asList(unpackagedOrder1, unpackagedOrder2));
 
-        OrderDTO order2 = new OrderDTO();
-        order2.setPaymentStatus(PaymentStatus.PENDING.getName());
+        Optional<List<OrderDTO>> result = packageService.getUnpackagedOrders();
 
-        OrderDTO order3 = new OrderDTO();
-        order3.setPaymentStatus(PaymentStatus.PAID.getName());
+        assertThat(result).isPresent();
+        assertThat(result.get().size()).isEqualTo(2);
+        verify(orderService, times(1)).findByPackaged();
+        verify(funkyUtils, times(1)).getUnpackagedAndPaidOrders();
+    }
 
-        List<OrderDTO> unpackagedOrders = Arrays.asList(order1, order2, order3);
+    @Test
+    void testGetUnpackagedOrders_EmptyUnpackagedOrders() {
+        when(orderService.findByPackaged()).thenReturn(Arrays.asList(packagedOrder1, packagedOrder2));
+        when(funkyUtils.getUnpackagedAndPaidOrders()).thenReturn(Collections.emptyList());
 
-        when(funkyClient.getUnpackagedOrders()).thenReturn(unpackagedOrders);
+        Optional<List<OrderDTO>> result = packageService.getUnpackagedOrders();
 
-        // When
-        List<OrderDTO> result = packageService.getUnpackagedAndPaidOrders();
-
-        // Then
-        List<OrderDTO> expected = unpackagedOrders.stream()
-                .filter(orderDTO -> PaymentStatus.PAID.getName().equals(orderDTO.getPaymentStatus()))
-                .collect(Collectors.toList());
-
-        assertEquals(expected, result);
+        assertThat(result).isPresent();
+        assertThat(result.get()).isEmpty();
+        verify(orderService, times(1)).findByPackaged();
+        verify(funkyUtils, times(1)).getUnpackagedAndPaidOrders();
     }
 }

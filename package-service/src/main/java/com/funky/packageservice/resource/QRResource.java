@@ -1,4 +1,4 @@
-package com.funky.packageservice.controller;
+package com.funky.packageservice.resource;
 
 import com.funky.packageservice.service.QRCodeGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;

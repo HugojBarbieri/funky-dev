@@ -1,4 +1,4 @@
-package com.funky.packageservice.controller;
+package com.funky.packageservice.resource;
 
 import com.funky.packageservice.model.ProductOrder;
 import com.funky.packageservice.service.ProductOrderService;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/products-order")
 public class ProductOrderResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderResource.class);
 

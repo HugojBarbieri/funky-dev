@@ -1,7 +1,9 @@
-package com.funky.packageservice.controller;
+package com.funky.packageservice.resource;
 
 import com.funky.packageservice.model.Order;
+import com.funky.packageservice.model.OrderStatus;
 import com.funky.packageservice.service.OrderService;
+import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/orders")
 public class OrderResource {
+
+    //TODO return OrderBasicDTO instead model
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderResource.class);
 
@@ -41,12 +46,16 @@ public class OrderResource {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<Order> findById(@PathVariable("orderId") Long orderId) {
-        return ResponseEntity.ok(orderService.findById(orderId));
+    public ResponseEntity<?> findById(@PathVariable("orderId") Long orderId) {
+        Optional<Order> order = orderService.findById(orderId);
+        if(order.isPresent()) {
+            return ResponseEntity.ok(order);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<Order> updateOrder(@PathVariable("orderId") Long orderId, @RequestParam("packaged") boolean packaged) {
-        return ResponseEntity.ok(orderService.update(orderId, packaged));
+    public ResponseEntity<Order> packaged(@PathVariable("orderId") Long orderId) {
+        return ResponseEntity.ok(orderService.packaged(orderId));
     }
 }

@@ -1,8 +1,8 @@
 package com.funky.packageservice.service;
 
 import com.funky.packageservice.model.Order;
+import com.funky.packageservice.model.OrderStatus;
 import com.funky.packageservice.repository.OrderRepository;
-import jakarta.ws.rs.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,7 @@ public class OrderService {
     }
 
     public Order save(Order order) {
+        order.setProductOrders(null);
         return orderRepository.save(order);
     }
 
@@ -41,16 +42,19 @@ public class OrderService {
         return false;
     }
 
-    public Order findById(Long id) {
-        return orderRepository.findById(id).orElseThrow(() -> new NoSuchElementException(
-                String.format("The id:%s does not exist",id)));
+    public Optional<Order> findById(Long id) {
+        return orderRepository.findById(id);
     }
 
-    public Order update(Long id, boolean packaged) {
+    public List<Order> findByPackaged() {
+        return orderRepository.findByOrderStatus(OrderStatus.PACKAGED);
+    }
+
+    public Order packaged(Long id) {
         Optional<Order> orderUpdate = orderRepository.findById(id);
         if(orderUpdate.isPresent()) {
             Order order = orderUpdate.get();
-            order.setPackaged(packaged);
+            order.setOrderStatus(OrderStatus.PACKAGED);
             orderRepository.save(order);
             return order;
         }

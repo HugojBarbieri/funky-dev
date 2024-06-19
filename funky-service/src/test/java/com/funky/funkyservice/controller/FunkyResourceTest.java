@@ -3,6 +3,7 @@ package com.funky.funkyservice.controller;
 import com.funky.funkyservice.dto.CustomerOrderDTO;
 import com.funky.funkyservice.dto.OrderDTO;
 import com.funky.funkyservice.dto.ProductOrderDTO;
+import com.funky.funkyservice.dto.ProductOrderImageDTO;
 import com.funky.funkyservice.service.FunkyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class FunkyControllerTest {
+public class FunkyResourceTest {
 
     private MockMvc mockMvc;
 
@@ -30,12 +31,12 @@ public class FunkyControllerTest {
     private FunkyService funkyService;
 
     @InjectMocks
-    private FunkyController funkyController;
+    private FunkyResource funkyResource;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(funkyController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(funkyResource).build();
     }
 
     @Test
@@ -82,6 +83,7 @@ public class FunkyControllerTest {
                         .name("Product Name")
                         .quantity(2)
                         .sku("sku-1")
+                        .image(ProductOrderImageDTO.builder().src("someSrc").build())
                         .variantValues(List.of("Variant 1", "Variant 2"))
                         .build()))
                 .build();
@@ -102,6 +104,7 @@ public class FunkyControllerTest {
                                 .name("Product 1")
                                 .quantity(2)
                                 .sku("sku-1")
+                                .image(ProductOrderImageDTO.builder().src("someSrc1").build())
                                 .depth("10.0")
                                 .build(),
                         ProductOrderDTO.builder()

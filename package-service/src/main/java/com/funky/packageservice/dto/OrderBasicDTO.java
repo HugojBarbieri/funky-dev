@@ -1,6 +1,8 @@
-package com.funky.packageservice.model;
+package com.funky.packageservice.dto;
 
-import jakarta.persistence.*;
+import com.funky.packageservice.model.OrderStatus;
+import com.funky.packageservice.model.ProductOrder;
+import com.funky.packageservice.model.ShipStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,22 +10,17 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Entity
-@Table(name = "orders")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Order {
+public class OrderBasicDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long tiendaNubeId;
     private int number;
     private OrderStatus orderStatus;
     private ShipStatus shipStatus;
     private String customer;
-    @OneToMany(mappedBy = "orderId")
-    private List<ProductOrder> productOrders;
+    private List<ProductBasicDTO> productOrders;
 }
