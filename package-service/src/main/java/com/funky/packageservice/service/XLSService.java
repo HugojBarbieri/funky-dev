@@ -128,7 +128,7 @@ public class XLSService {
 
     private int writeDashRow(Sheet sheet, int rowIndex) {
         Row dashRow = sheet.createRow(rowIndex);
-        writeCell(dashRow, 0, "#".repeat(60), cellStyle);
+        writeCell(dashRow, 0, "".repeat(60), cellStyle);
         return rowIndex + 1;
     }
 
