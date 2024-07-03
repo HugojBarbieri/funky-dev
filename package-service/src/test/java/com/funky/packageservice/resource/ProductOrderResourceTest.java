@@ -102,7 +102,7 @@ public class ProductOrderResourceTest {
         ProductOrder productOrder = productList().get(0);
         when(productOrderService.findById(1L)).thenReturn(productOrder);
 
-        mockMvc.perform(get("/products/1"))
+        mockMvc.perform(get("/products-order/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("CAMPERA NIÑOS FRISADA FUNKY CELESTE (4 años)"))
@@ -118,7 +118,7 @@ public class ProductOrderResourceTest {
         productOrder.setReady(true);
         when(productOrderService.updateToggle(1L)).thenReturn(productOrder);
 
-        mockMvc.perform(put("/products/1/toggle"))
+        mockMvc.perform(put("/products-order/1/toggle"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("CAMPERA NIÑOS FRISADA FUNKY CELESTE (4 años)"))
