@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+configtn:
+  base-url: ${BASE_URL}
+  auth-token: ${AUTH_TOKEN}
+  user-agent: ${USER_AGENT}
+
+spring:
+  application:
+    name: funky
+  datasource:
+    url: jdbc:postgresql://postgres:5432/funky
+    username: funky
+    password: funky
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+qrcode:
+  output:
+    directory: "/Users/javierbarbieri/developer/application"
+
+management:
+  info:
+    env:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+info:
+  app:
+    name: FunkyApplication
+    description: Funky App
+    version: 1.0
+

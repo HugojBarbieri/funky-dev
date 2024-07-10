@@ -56,21 +56,28 @@ public class TiendaNubeService {
         return new ArrayList<>();
     }
 
-    public ProductTiendaNubeDTO[] getProducts() {
-        RestTemplate restTemplate = new RestTemplate();
+    public List<ProductTiendaNubeDTO> getProducts() {
+        try{
+            RestTemplate restTemplate = new RestTemplate();
 
-        // Set headers
-        HttpEntity<String> entity = getHttpEntity();
+            // Set headers
+            HttpEntity<String> entity = getHttpEntity();
 
-        // Make GET request
-        ResponseEntity<ProductTiendaNubeDTO[]> response = restTemplate.exchange(
-                baseUrl + "/products",
-                HttpMethod.GET,
-                entity,
-                ProductTiendaNubeDTO[].class
-        );
+            // Make GET request
+            ResponseEntity<ProductTiendaNubeDTO[]> response = restTemplate.exchange(
+                    baseUrl + "/products",
+                    HttpMethod.GET,
+                    entity,
+                    ProductTiendaNubeDTO[].class
+            );
 
-        return response.getBody();
+            return Arrays.stream(Objects.requireNonNull(response.getBody())).collect(Collectors.toList());
+        }
+        catch (NullPointerException e) {
+            //TODO add log when error happens
+        }
+        return new ArrayList<>();
+
     }
 
     private HttpEntity<String> getHttpEntity() {
