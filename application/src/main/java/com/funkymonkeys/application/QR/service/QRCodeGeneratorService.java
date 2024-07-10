@@ -7,6 +7,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,7 @@ public class QRCodeGeneratorService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QRCodeGeneratorService.class);
 
-
-    public QRCodeGeneratorService(@Value("qrcode.output.directory") String outputLocation) {
+    public QRCodeGeneratorService(@Value("${qrcode.output.directory}") String outputLocation) {
         this.outputLocation = outputLocation;
     }
 
