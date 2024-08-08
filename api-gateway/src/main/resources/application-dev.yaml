@@ -1,5 +1,0 @@
-spring:
-  application:
-    name: api-gateway-dev
-  config:
-    import: "optional:configserver:http://configserver:8088"
