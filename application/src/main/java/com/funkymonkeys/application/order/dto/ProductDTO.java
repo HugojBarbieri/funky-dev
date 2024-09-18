@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public record ProductDTO (long id, ProductNameTiendaNubeDTO name, boolean published,
                           String canonicalUrl,
-                          List<ProductVariantDTO> variants, String tags, int quantity,
+                          List<ProductVariantDTO> variants, String tags, int quantity, String barcode,
                           List<ProductImageDTO> images){
 }
 

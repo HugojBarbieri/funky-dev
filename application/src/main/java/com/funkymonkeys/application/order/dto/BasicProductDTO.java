@@ -7,11 +7,15 @@ import java.util.List;
 
 @Builder
 public record BasicProductDTO(
-        long id,
+        Long id,
         String imagePath,
         String name,
         String sku,
         boolean ready,
         Long orderId,
-        String imageUrl
+        String imageUrl,
+        int orderNumber,
+        String barcode,
+        int check,
+        int quantity
 ) {}

@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/funky/orders")
+@CrossOrigin(origins = "http://localhost:5173")
 public class OrderResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderResource.class);

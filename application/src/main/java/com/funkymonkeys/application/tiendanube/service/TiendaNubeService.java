@@ -44,10 +44,10 @@ public class TiendaNubeService {
             );
             return Arrays.stream(Objects.requireNonNull(response.getBody()))
                     .filter(orderTiendaNubeDTO -> PaymentStatus.PAID.getName()
-                            .equals(orderTiendaNubeDTO.paymentStatus()))
-                    .sorted(Comparator.comparing(OrderTiendaNubeDTO::createdAt)
+                            .equals(orderTiendaNubeDTO.getPaymentStatus()))
+                    .sorted(Comparator.comparing(OrderTiendaNubeDTO::getCreatedAt)
                             .reversed()
-                            .thenComparing(OrderTiendaNubeDTO::number))
+                            .thenComparing(OrderTiendaNubeDTO::getNumber))
                                         .collect(Collectors.toList());
         } catch (NullPointerException e) {
             //TODO add log when error happens

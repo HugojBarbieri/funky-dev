@@ -31,16 +31,31 @@ public class OrderService {
     }
 
     public Order save(OrderDTO orderDTO) {
-        Order order = Order.builder()
-                .tiendaNubeId(orderDTO.tiendaNubeId())
-                .number(orderDTO.number())
-                .orderStatus(orderDTO.orderStatus())
-                .shipStatus(orderDTO.shipStatus())
-                .customer(orderDTO.customer())
-                .build();
+        Optional<Order> orderDB = findByTiendaNubeId(orderDTO.tiendaNubeId());
+        if(orderDB.isEmpty()) {
+            Order order =  Order.builder()
+                    .tiendaNubeId(orderDTO.tiendaNubeId())
+                    .number(orderDTO.number())
+                    .orderStatus(OrderStatus.UNPACKAGED)
+                    .shipStatus(orderDTO.shipStatus())
+                    .customer(orderDTO.customer())
+                    .build();
 
-        return orderRepository.save(order);
+            return orderRepository.save(order);
+        }
+
+        if(orderDTO.shipStatus() != null && !orderDTO.shipStatus().equals(orderDB.get().getShipStatus())) {
+            orderDB.get().setShipStatus(orderDTO.shipStatus());
+        }
+
+        if(orderDTO.orderStatus() != null && !orderDTO.orderStatus().equals(orderDB.get().getOrderStatus())) {
+            orderDB.get().setOrderStatus(orderDTO.orderStatus());
+        }
+
+        return orderDB.get();
     }
+
+    //create update and check if value change, otherwise don't do update
 
     public boolean delete(Long orderId) {
         Optional<Order> orderToDelete= orderRepository.findById(orderId);
@@ -58,6 +73,14 @@ public class OrderService {
 
     public List<Order> findByPackaged() {
         return orderRepository.findByOrderStatus(OrderStatus.PACKAGED);
+    }
+
+    public List<Order> findByUnPackaged() {
+        return orderRepository.findByOrderStatus(OrderStatus.UNPACKAGED);
+    }
+
+    public Optional<Order> findByTiendaNubeId(Long tiendaNubeID) {
+       return orderRepository.findByTiendaNubeId(tiendaNubeID);
     }
 
     public Order packaged(Long id) {

@@ -54,7 +54,7 @@ public class XLSService {
         int partialIndex = 0;
 
         for (OrderTiendaNubeDTO order : orders) {
-            if (shouldBreakPage(partialIndex, order.products().size())) {
+            if (shouldBreakPage(partialIndex, order.getProducts().size())) {
                 sheet.setRowBreak(rowIndex);
                 partialIndex = 0;
             }
@@ -66,9 +66,9 @@ public class XLSService {
             partialIndex += 2;
 
             rowIndex = writeProductHeader(sheet, rowIndex);
-            rowIndex = writeProducts(sheet, order.products(), rowIndex);
+            rowIndex = writeProducts(sheet, order.getProducts(), rowIndex);
 
-            rowIndex = writeTotalQuantity(sheet, order.products(), rowIndex);
+            rowIndex = writeTotalQuantity(sheet, order.getProducts(), rowIndex);
             rowIndex = writeDashRow(sheet, rowIndex);
             rowIndex = writeOwnerNotes(sheet, order, rowIndex);
 
@@ -82,17 +82,17 @@ public class XLSService {
 
     int writeOrder(Sheet sheet, OrderTiendaNubeDTO order, int rowIndex) {
         Row orderRow = sheet.createRow(rowIndex);
-        writeCell(orderRow, 0, order.customer().name(), greyCellStyle);
+        writeCell(orderRow, 0, order.getCustomer().name(), greyCellStyle);
         sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, 1));
         writeCell(orderRow, 2, ORDER_NRO, greyCellStyle);
-        writeCell(orderRow, 3, String.valueOf(order.number()), greyCellStyle);
+        writeCell(orderRow, 3, String.valueOf(order.getNumber()), greyCellStyle);
         return rowIndex + 2;
     }
 
     private int writeOrderNotes(Sheet sheet, OrderTiendaNubeDTO order, int rowIndex) {
-        if (order.note() != null && !order.note().isEmpty()) {
+        if (order.getNote() != null && !order.getNote().isEmpty()) {
             Row noteRow = sheet.createRow(rowIndex);
-            writeCell(noteRow, 0, CLIENT_NOTES + ENTER + order.note(), greyCellStyle);
+            writeCell(noteRow, 0, CLIENT_NOTES + ENTER + order.getNote(), greyCellStyle);
             sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, 3));
             return rowIndex + 2;
         }
@@ -111,8 +111,8 @@ public class XLSService {
         for (BasicProductTiendaNubeDTO productOrderDTO : productOrderDTOS) {
             Row productRow = sheet.createRow(rowIndex++);
             CellStyle currentStyle = switchFont ? greyCellStyle : cellStyle;
-            writeCell(productRow, 0, productOrderDTO.name(), currentStyle);
-            writeCell(productRow, 1, String.valueOf(productOrderDTO.quantity()), currentStyle);
+            writeCell(productRow, 0, productOrderDTO.getName(), currentStyle);
+            writeCell(productRow, 1, String.valueOf(productOrderDTO.getQuantity()), currentStyle);
             switchFont = !switchFont;
         }
         return rowIndex;
@@ -120,7 +120,7 @@ public class XLSService {
 
     int writeTotalQuantity(Sheet sheet, List<BasicProductTiendaNubeDTO> productOrderDTOS, int rowIndex) {
         Row totalRow = sheet.createRow(rowIndex);
-        int totalQuantity = productOrderDTOS.stream().mapToInt(BasicProductTiendaNubeDTO::quantity).sum();
+        int totalQuantity = productOrderDTOS.stream().mapToInt(BasicProductTiendaNubeDTO::getQuantity).sum();
         writeCell(totalRow, 0, "Cantidad Articulos", cellStyle);
         writeCell(totalRow, 1, String.valueOf(totalQuantity), cellStyle);
         return rowIndex + 2;
@@ -133,9 +133,9 @@ public class XLSService {
     }
 
     private int writeOwnerNotes(Sheet sheet, OrderTiendaNubeDTO order, int rowIndex) {
-        if (order.ownerNote() != null) {
+        if (order.getOwnerNote() != null) {
             Row ownerNoteRow = sheet.createRow(rowIndex);
-            writeCell(ownerNoteRow, 0, OUR_NOTES + ENTER + order.ownerNote(), greyCellStyle);
+            writeCell(ownerNoteRow, 0, OUR_NOTES + ENTER + order.getOwnerNote(), greyCellStyle);
             sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, 3));
             rowIndex++;
             rowIndex = writeDashRow(sheet, rowIndex);
