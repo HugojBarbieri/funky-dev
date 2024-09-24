@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PackageService{
+public class PackageService {
 
     private final TiendaNubeService tiendaNubeService;
     private final OrderService orderService;
@@ -42,24 +42,25 @@ public class PackageService{
 
     private List<Order> dBMirror(List<OrderTiendaNubeDTO> ordersFromFunky) {
         ordersFromFunky.forEach(o -> {
-                Order order =orderService.save(OrderDTO.builder()
-                                .tiendaNubeId(o.getId())
-                                .customer(o.getCustomer().name())
-                                .number(o.getNumber())
+            Order order = orderService.save(OrderDTO.builder()
+                    .tiendaNubeId(o.getId())
+                    .customer(o.getCustomer().name())
+                    .number(o.getNumber())
+                    .build());
+            o.setOrderStatus(order.getOrderStatus().name());
+            o.getProducts().forEach(p -> {
+                productService.save(BasicProductDTO.builder()
+                        .sku(p.getSku())
+                        .ready(false)
+                        .id(p.getId())
+                        .orderId(order.getId())
+                        .orderNumber(order.getNumber())
+                        .imageUrl(p.getImage().src())
+                        .name(p.getName())
+                        .barcode(p.getBarcode())
+                        .quantity(p.getQuantity())
                         .build());
-                o.getProducts().forEach(p -> {
-                    productService.save(BasicProductDTO.builder()
-                                    .sku(p.getSku())
-                                    .ready(false)
-                                    .id(p.getId())
-                                    .orderId(order.getId())
-                                    .orderNumber(order.getNumber())
-                                    .imageUrl(p.getImage().src())
-                                    .name(p.getName())
-                                    .barcode(p.getBarcode())
-                                    .quantity(p.getQuantity())
-                            .build());
-                });
+            });
         });
 
 
@@ -86,5 +87,15 @@ public class PackageService{
 
         // If there are products associated with the order, find the first unpackaged product
         return Optional.of(matchingOrder.getProducts());
+    }
+
+    public OrderDTO packaged(Long id) {
+        Order packaged = orderService.packaged(id);
+        return OrderDTO.builder()
+                .orderStatus(packaged.getOrderStatus())
+                .id(packaged.getId())
+                .shipStatus(packaged.getShipStatus())
+                .number(packaged.getNumber())
+                .build();
     }
 }

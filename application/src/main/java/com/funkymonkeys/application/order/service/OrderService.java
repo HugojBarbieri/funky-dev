@@ -4,7 +4,6 @@ package com.funkymonkeys.application.order.service;
 import com.funkymonkeys.application.order.dto.OrderDTO;
 import com.funkymonkeys.application.order.model.Order;
 import com.funkymonkeys.application.order.model.OrderStatus;
-import com.funkymonkeys.application.order.model.ShipStatus;
 import com.funkymonkeys.application.order.repository.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +43,6 @@ public class OrderService {
             return orderRepository.save(order);
         }
 
-        if(orderDTO.shipStatus() != null && !orderDTO.shipStatus().equals(orderDB.get().getShipStatus())) {
-            orderDB.get().setShipStatus(orderDTO.shipStatus());
-        }
-
-        if(orderDTO.orderStatus() != null && !orderDTO.orderStatus().equals(orderDB.get().getOrderStatus())) {
-            orderDB.get().setOrderStatus(orderDTO.orderStatus());
-        }
 
         return orderDB.get();
     }
@@ -83,14 +75,14 @@ public class OrderService {
        return orderRepository.findByTiendaNubeId(tiendaNubeID);
     }
 
-    public Order packaged(Long id) {
-        Optional<Order> orderUpdate = orderRepository.findById(id);
+    public Order packaged(Long tiendaNubeID) {
+        Optional<Order> orderUpdate = orderRepository.findByTiendaNubeId(tiendaNubeID);
         if(orderUpdate.isPresent()) {
             Order order = orderUpdate.get();
             order.setOrderStatus(OrderStatus.PACKAGED);
             orderRepository.save(order);
             return order;
         }
-        throw new NoSuchElementException(String.format("The id:%s does not exist",id));
+        throw new NoSuchElementException(String.format("The id:%s does not exist", tiendaNubeID));
     }
 }

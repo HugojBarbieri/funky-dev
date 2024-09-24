@@ -1,5 +1,6 @@
 package com.funkymonkeys.application.packageOrder.resource;
 
+import com.funkymonkeys.application.order.dto.OrderDTO;
 import com.funkymonkeys.application.packageOrder.service.PackageService;
 import com.funkymonkeys.application.tiendanube.dto.BasicProductTiendaNubeDTO;
 import com.funkymonkeys.application.tiendanube.dto.OrderTiendaNubeDTO;
@@ -46,5 +47,10 @@ public class PackageResource {
         }
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{orderId}")
+    public ResponseEntity<OrderDTO> packaged(@PathVariable("orderId") Long orderId) {
+        return ResponseEntity.ok(packageService.packaged(orderId));
     }
 }

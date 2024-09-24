@@ -22,6 +22,8 @@ public class OrderTiendaNubeDTO {
     private int number;
     @JsonProperty("shipping_status")
     private String shippingStatus;
+    @JsonProperty("status")
+    private String orderStatus;
     @JsonProperty("payment_status")
     private String paymentStatus;
     @JsonProperty("created_at")

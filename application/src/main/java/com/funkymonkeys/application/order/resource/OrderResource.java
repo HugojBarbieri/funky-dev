@@ -52,9 +52,4 @@ public class OrderResource {
         }
         return ResponseEntity.notFound().build();
     }
-
-    @PutMapping("/{orderId}")
-    public ResponseEntity<Order> packaged(@PathVariable("orderId") Long orderId) {
-        return ResponseEntity.ok(orderService.packaged(orderId));
-    }
 }
