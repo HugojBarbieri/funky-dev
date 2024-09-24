@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/funky/orders")
+@CrossOrigin(origins = "http://localhost:5173")
 public class OrderResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderResource.class);
@@ -50,10 +51,5 @@ public class OrderResource {
             return ResponseEntity.ok(order);
         }
         return ResponseEntity.notFound().build();
-    }
-
-    @PutMapping("/{orderId}")
-    public ResponseEntity<Order> packaged(@PathVariable("orderId") Long orderId) {
-        return ResponseEntity.ok(orderService.packaged(orderId));
     }
 }

@@ -21,7 +21,9 @@ public class Order {
     private Long id;
     private Long tiendaNubeId;
     private int number;
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+    @Enumerated(EnumType.STRING)
     private ShipStatus shipStatus;
     private String customer;
     @OneToMany(mappedBy = "orderId")

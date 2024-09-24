@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/funky/products")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProductResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
@@ -45,9 +46,13 @@ public class ProductResource {
         return ResponseEntity.ok(productService.findById(productId));
     }
 
-    @PutMapping("/{productId}/toggle")
-    public ResponseEntity<Product> updateProductToggle(@PathVariable("productId") Long productId) {
-        return ResponseEntity.ok(productService.updateToggle(productId));
+    @PutMapping("/{productId}/check")
+    public ResponseEntity<Product> checkProduct(@PathVariable("productId") Long productId) {
+        return ResponseEntity.ok(productService.checkProduct(productId));
     }
-    //TODO call productService and get url to create a product ready
+
+    @PutMapping("/{productId}/uncheck")
+    public ResponseEntity<Product> uncheckProduct(@PathVariable("productId") Long productId) {
+        return ResponseEntity.ok(productService.uncheckProduct(productId));
+    }
 }

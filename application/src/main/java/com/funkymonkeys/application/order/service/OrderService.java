@@ -4,7 +4,6 @@ package com.funkymonkeys.application.order.service;
 import com.funkymonkeys.application.order.dto.OrderDTO;
 import com.funkymonkeys.application.order.model.Order;
 import com.funkymonkeys.application.order.model.OrderStatus;
-import com.funkymonkeys.application.order.model.ShipStatus;
 import com.funkymonkeys.application.order.repository.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,16 +30,24 @@ public class OrderService {
     }
 
     public Order save(OrderDTO orderDTO) {
-        Order order = Order.builder()
-                .tiendaNubeId(orderDTO.tiendaNubeId())
-                .number(orderDTO.number())
-                .orderStatus(orderDTO.orderStatus())
-                .shipStatus(orderDTO.shipStatus())
-                .customer(orderDTO.customer())
-                .build();
+        Optional<Order> orderDB = findByTiendaNubeId(orderDTO.tiendaNubeId());
+        if(orderDB.isEmpty()) {
+            Order order =  Order.builder()
+                    .tiendaNubeId(orderDTO.tiendaNubeId())
+                    .number(orderDTO.number())
+                    .orderStatus(OrderStatus.UNPACKAGED)
+                    .shipStatus(orderDTO.shipStatus())
+                    .customer(orderDTO.customer())
+                    .build();
 
-        return orderRepository.save(order);
+            return orderRepository.save(order);
+        }
+
+
+        return orderDB.get();
     }
+
+    //create update and check if value change, otherwise don't do update
 
     public boolean delete(Long orderId) {
         Optional<Order> orderToDelete= orderRepository.findById(orderId);
@@ -60,14 +67,22 @@ public class OrderService {
         return orderRepository.findByOrderStatus(OrderStatus.PACKAGED);
     }
 
-    public Order packaged(Long id) {
-        Optional<Order> orderUpdate = orderRepository.findById(id);
+    public List<Order> findByUnPackaged() {
+        return orderRepository.findByOrderStatus(OrderStatus.UNPACKAGED);
+    }
+
+    public Optional<Order> findByTiendaNubeId(Long tiendaNubeID) {
+       return orderRepository.findByTiendaNubeId(tiendaNubeID);
+    }
+
+    public Order packaged(Long tiendaNubeID) {
+        Optional<Order> orderUpdate = orderRepository.findByTiendaNubeId(tiendaNubeID);
         if(orderUpdate.isPresent()) {
             Order order = orderUpdate.get();
             order.setOrderStatus(OrderStatus.PACKAGED);
             orderRepository.save(order);
             return order;
         }
-        throw new NoSuchElementException(String.format("The id:%s does not exist",id));
+        throw new NoSuchElementException(String.format("The id:%s does not exist", tiendaNubeID));
     }
 }

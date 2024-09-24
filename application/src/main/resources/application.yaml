@@ -22,7 +22,7 @@ spring:
 
 qrcode:
   output:
-    directory: "/Users/javierbarbieri/developer/application"
+    directory: "/Users/hjbarbieri/developer/application/"
 
 management:
   info:
