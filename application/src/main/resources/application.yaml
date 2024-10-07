@@ -7,8 +7,17 @@ configtn:
   user-agent: ${USER_AGENT}
 
 spring:
+  mvc:
+    view:
+      prefix: /
+      suffix: .html
   application:
     name: funky
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/funky-test
+    user: funky
+    password: funky
   datasource:
     url: jdbc:postgresql://localhost:5432/funky-test
     username: funky
@@ -17,8 +26,17 @@ spring:
     database: POSTGRESQL
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-    hibernate:
-      ddl-auto: create-drop
+  mail:
+    host: ${EMAIL_HOST}
+    port: ${EMAIL_PORT}
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 qrcode:
   output:

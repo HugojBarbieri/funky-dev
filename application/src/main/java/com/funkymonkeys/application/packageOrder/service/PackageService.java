@@ -8,6 +8,7 @@ import com.funkymonkeys.application.order.service.ProductService;
 import com.funkymonkeys.application.tiendanube.dto.BasicProductTiendaNubeDTO;
 import com.funkymonkeys.application.tiendanube.dto.OrderTiendaNubeDTO;
 import com.funkymonkeys.application.tiendanube.service.TiendaNubeService;
+import com.funkymonkeys.application.util.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +21,14 @@ public class PackageService {
     private final TiendaNubeService tiendaNubeService;
     private final OrderService orderService;
     private final ProductService productService;
+    private final EmailService emailService;
 
     @Autowired
-    public PackageService(TiendaNubeService tiendaNubeService, OrderService orderService, ProductService productService) {
+    public PackageService(TiendaNubeService tiendaNubeService, OrderService orderService, ProductService productService, EmailService emailService) {
         this.tiendaNubeService = tiendaNubeService;
         this.orderService = orderService;
         this.productService = productService;
+        this.emailService = emailService;
     }
 
     public Optional<List<OrderTiendaNubeDTO>> getUnpackagedOrders() {
@@ -91,6 +94,7 @@ public class PackageService {
 
     public OrderDTO packaged(Long id) {
         Order packaged = orderService.packaged(id);
+        emailService.sendEmail(packaged);
         return OrderDTO.builder()
                 .orderStatus(packaged.getOrderStatus())
                 .id(packaged.getId())
