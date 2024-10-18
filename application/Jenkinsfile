@@ -24,7 +24,6 @@ pipeline {
                     // Load environment variables from credentials
                     envVars.each { var, credId ->
                         withCredentials([string(credentialsId: credId, variable: var)]) {
-                            echo "setting env var"
                     }
 
                     dir('application') {
