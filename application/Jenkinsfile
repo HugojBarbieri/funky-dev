@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh './mvnw spring-boot:build-image "-Dspring-boot.build-image.imageName=hjbarbieri/funkyapp:1.1"'
+                sh 'application/./mvnw spring-boot:build-image "-Dspring-boot.build-image.imageName=hjbarbieri/funkyapp:1.1"'
             }
         }
         // stage('Test') {
