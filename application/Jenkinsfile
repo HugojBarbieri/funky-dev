@@ -24,7 +24,9 @@ pipeline {
                     // Load environment variables from credentials
                     envVars.each { var, credId ->
                         withCredentials([string(credentialsId: credId, variable: var)]) {
-                            env."${var}" = env."${var}"
+                            // The environment variable is automatically set
+                            // The variable is now available for use in the pipeline
+                            echo "${var} is set to: ${env."${var}"}" // Optional: Debug line to confirm the value
                         }
                     }
 
