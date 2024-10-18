@@ -6,13 +6,13 @@ pipeline {
     }
     
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')  // Replace with your Jenkins credentials ID
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')  
     }
     
     stages {
         stage('Build') {
             steps {
-                sh 'application/./mvnw spring-boot:build-image "-Dspring-boot.build-image.imageName=hjbarbieri/funkyapp:1.1"'
+                sh './application/mvnw spring-boot:build-image "-Dspring-boot.build-image.imageName=hjbarbieri/funkyapp:1.2"'
             }
         }
         // stage('Test') {
@@ -27,7 +27,7 @@ pipeline {
                     sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
                     
                     // Push the Docker image
-                    sh 'docker push hjbarbieri/funkyapp:1.1'
+                    sh 'docker push hjbarbieri/funkyapp:1.2'
                 }
             }
         }
