@@ -8,13 +8,17 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // Since mvnw is in the same directory as the Jenkinsfile
-                sh './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=hjbarbieri/funkyapp:1.2'
+                dir('application') {
+                    // Inside 'application' folder, run mvnw
+                    sh './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=hjbarbieri/funkyapp:1.2'
+                }
             }
         }
         stage('Test') {
             steps {
-                sh './mvnw test'
+                dir('application') {
+                    sh './mvnw test'
+                }
             }
         }
         stage('Deploy') {
