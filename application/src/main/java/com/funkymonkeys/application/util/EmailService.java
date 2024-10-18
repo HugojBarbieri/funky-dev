@@ -5,6 +5,7 @@ import com.funkymonkeys.application.order.model.Product;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,10 +19,12 @@ public class EmailService {
 
 
     private final JavaMailSender emailSender;
+    private final String emailSenderTo;
 
     @Autowired
-    public EmailService(JavaMailSender emailSender) {
+    public EmailService(JavaMailSender emailSender, @Value("${config-email}") String emailSenderTo) {
         this.emailSender = emailSender;
+        this.emailSenderTo = emailSenderTo;
     }
 
     public void sendEmail(Order order) {
@@ -31,7 +34,7 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
             // Set the email details
-            helper.setTo(System.getenv("EMAIL_SENDER"));
+            helper.setTo(emailSenderTo);
             helper.setSubject(String.format("Orden #%d fue empaquetada", order.getNumber()));
             String productNames = order.getProducts().stream()
                     .map(Product::getName)  // Assuming Product has a getName() method
