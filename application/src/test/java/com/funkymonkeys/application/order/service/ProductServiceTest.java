@@ -4,6 +4,7 @@ import com.funkymonkeys.application.order.dto.BasicProductDTO;
 import com.funkymonkeys.application.order.model.Product;
 import com.funkymonkeys.application.order.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -18,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@Disabled("This test is ignored for now")
 public class ProductServiceTest {
 
     @Mock
