@@ -22,7 +22,7 @@ public class EmailService {
     private final String emailSenderTo;
 
     @Autowired
-    public EmailService(JavaMailSender emailSender, @Value("${config-email}") String emailSenderTo) {
+    public EmailService(JavaMailSender emailSender, @Value("${config-email.email-sender-to}") String emailSenderTo) {
         this.emailSender = emailSender;
         this.emailSenderTo = emailSenderTo;
     }
