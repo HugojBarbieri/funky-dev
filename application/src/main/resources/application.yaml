@@ -6,9 +6,6 @@ configtn:
   auth-token: ${AUTH_TOKEN}
   user-agent: ${USER_AGENT}
 
-config-email:
-  email-sender-to: ${EMAIL_SENDER}
-
 spring:
   mvc:
     view:
