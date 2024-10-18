@@ -11,14 +11,14 @@ pipeline {
                 script {
                     // List of environment variables and their corresponding secret IDs
                     def envVars = [
-                        'USER_AGENT'    : 'USER_AGENT',
-                        'BASE_URL'      : 'BASE_URL',
-                        'AUTH_TOKEN'    : 'AUTH_TOKEN',
-                        'EMAIL_HOST'    : 'EMAIL_HOST',
-                        'EMAIL_PORT'    : 'EMAIL_PORT',
-                        'EMAIL_PASSWORD' : 'EMAIL_PASSWORD',
-                        'EMAIL_SENDER'  : 'EMAIL_SENDER',
-                        'EMAIL_USERNAME' : 'EMAIL_USERNAME'
+                        'USER_AGENT'    : 'USER_AGENT_CREDENTIALS',
+                        'BASE_URL'      : 'BASE_URL_CREDENTIALS',
+                        'AUTH_TOKEN'    : 'AUTH_TOKEN_CREDENTIALS',
+                        'EMAIL_HOST'    : 'EMAIL_HOST_CREDENTIALS',
+                        'EMAIL_PORT'    : 'EMAIL_PORT_CREDENTIALS',
+                        'EMAIL_PASSWORD' : 'EMAIL_PASSWORD_CREDENTIALS',
+                        'EMAIL_SENDER'  : 'EMAIL_SENDER_CREDENTIALS',
+                        'EMAIL_USERNAME' : 'EMAIL_USERNAME_CREDENTIALS'
                     ]
 
                     // Load environment variables from credentials
