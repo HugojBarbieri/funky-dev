@@ -2,31 +2,26 @@ pipeline {
     agent any
     
     tools {
-        maven 'mavenjenkins'
-    }
-    
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')  
+        maven 'mavenjenkins' // Optional, depending on your Jenkins setup
     }
     
     stages {
         stage('Build') {
             steps {
-                sh './application/mvnw spring-boot:build-image "-Dspring-boot.build-image.imageName=hjbarbieri/funkyapp:1.2"'
+                // Since mvnw is in the same directory as the Jenkinsfile
+                sh './mvnw spring-boot:build-image -Dspring-boot.build-image.imageName=hjbarbieri/funkyapp:1.2'
             }
         }
-        // stage('Test') {
-        //     steps {
-        //         sh 'mvn test'
-        //     }
-        // }
+        stage('Test') {
+            steps {
+                sh './mvnw test'
+            }
+        }
         stage('Deploy') {
             steps {
                 script {
-                    // Docker Login
+                    // Docker login and push
                     sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
-                    
-                    // Push the Docker image
                     sh 'docker push hjbarbieri/funkyapp:1.2'
                 }
             }
